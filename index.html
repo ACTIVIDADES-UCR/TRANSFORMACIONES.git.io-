@@ -39,58 +39,141 @@
       background: var(--fondo);
       color: var(--text);
       line-height: 1.7;
+      /* Espacio para el footer fijo (no tapar el final de la página) */
+      padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
+    }
+    @media (min-width: 640px) {
+      body { padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px)); }
     }
 
     /* ── NAVBAR ── */
     nav {
       position: sticky; top: 0; z-index: 100;
-      background: var(--azul);
+      background: linear-gradient(180deg, #002a5c 0%, var(--azul) 100%);
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2rem; height: 56px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+      flex-wrap: wrap; row-gap: 8px;
+      padding: 8px 1.25rem 10px;
+      min-height: 58px;
+      box-shadow: 0 4px 20px rgba(0,24,52,0.35);
+      border-bottom: 1px solid rgba(200,155,40,0.15);
     }
     .nav-brand {
-      color: #fff; font-weight: 700; font-size: 1rem;
-      display: flex; align-items: center; gap: 10px;
+      color: #fff; font-weight: 700; font-size: 0.95rem;
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none;
+      flex-shrink: 0;
     }
-    .nav-brand span { color: var(--oro); }
+    .nav-brand:hover { color: #fff; }
+    .nav-accent { color: var(--oro); }
+    .nav-logo {
+      height: 42px;
+      width: auto;
+      max-width: 48px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: #fff;
+      padding: 3px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      flex-shrink: 0;
+    }
+    .nav-brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      line-height: 1.25;
+    }
+    .nav-brand-text small {
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 0.02em;
+    }
     .nav-links {
-      display: flex; gap: 6px; list-style: none;
+      display: flex; gap: 4px; list-style: none;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      max-width: 100%;
+    }
+    @media (max-width: 960px) {
+      .nav-links {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255,255,255,0.35) transparent;
+        padding-bottom: 4px;
+        width: 100%;
+        justify-content: flex-start;
+      }
+      .nav-links::-webkit-scrollbar { height: 4px; }
+      .nav-links::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.35); border-radius: 4px; }
     }
     .nav-links a {
-      color: rgba(255,255,255,0.82);
-      text-decoration: none; font-size: 0.82rem;
-      padding: 5px 12px; border-radius: 20px;
+      color: rgba(255,255,255,0.88);
+      text-decoration: none; font-size: 0.78rem;
+      padding: 6px 0.65rem; border-radius: 999px;
       transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
     }
-    .nav-links a:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .nav-links a:hover { background: rgba(255,255,255,0.14); color: #fff; }
+    .nav-links a:focus-visible {
+      outline: 2px solid var(--oro);
+      outline-offset: 2px;
+    }
 
     /* ── HERO ── */
     .hero {
-      background: linear-gradient(135deg, var(--azul) 55%, #1a5fa8 100%);
+      background: linear-gradient(145deg, #002a5c 0%, var(--azul) 42%, #1a5fa8 100%);
       color: #fff; text-align: center;
-      padding: 72px 2rem 60px;
+      padding: 56px 2rem 64px;
       position: relative; overflow: hidden;
     }
     .hero::before {
       content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 70% 40%, rgba(200,155,40,0.12) 0%, transparent 65%);
+      background: radial-gradient(ellipse at 70% 40%, rgba(200,155,40,0.14) 0%, transparent 65%);
+    }
+    .hero::after {
+      content: ''; position: absolute; right: -80px; top: 50%;
+      transform: translateY(-50%);
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-emblem {
+      width: 88px; height: 88px;
+      margin: 0 auto 20px;
+      position: relative; z-index: 1;
+      border-radius: 50%;
+      background: #fff;
+      padding: 6px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+    }
+    .hero-emblem img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      border-radius: 50%;
+      display: block;
     }
     .hero-badge {
       display: inline-block;
-      background: rgba(200,155,40,0.18); border: 1px solid rgba(200,155,40,0.4);
+      position: relative; z-index: 1;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(200,155,40,0.45);
       color: var(--oro); font-size: 0.78rem; font-weight: 600;
       letter-spacing: 2px; text-transform: uppercase;
-      padding: 4px 16px; border-radius: 20px; margin-bottom: 16px;
+      padding: 6px 18px; border-radius: 999px; margin-bottom: 18px;
     }
     .hero h1 {
       font-family: 'Crimson Pro', serif;
       font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 700;
       line-height: 1.15; margin-bottom: 14px;
+      position: relative; z-index: 1;
+      text-shadow: 0 2px 24px rgba(0,0,0,0.15);
     }
     .hero p {
-      font-size: 1.05rem; color: rgba(255,255,255,0.78);
-      max-width: 620px; margin: 0 auto 28px;
+      font-size: 1.05rem; color: rgba(255,255,255,0.82);
+      max-width: 640px; margin: 0 auto 28px;
+      position: relative; z-index: 1;
     }
     .hero-rule {
       width: 120px; height: 3px; margin: 0 auto;
@@ -570,22 +653,151 @@
       border-radius: 0 8px 8px 0; font-size: 0.9rem; color: #5a4010;
     }
 
-    /* ── FOOTER ── */
+    /* ── FOOTER (fijo abajo) ── */
     footer {
-      background: var(--azul); color: rgba(255,255,255,0.72);
-      text-align: center; padding: 28px 1rem;
-      font-size: 0.85rem; margin-top: 60px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 90;
+      background: linear-gradient(180deg, #002a5c 0%, var(--azul) 100%);
+      color: rgba(255,255,255,0.78);
+      padding: 12px 1.25rem  calc(12px + env(safe-area-inset-bottom, 0px));
+      font-size: 0.8rem;
+      margin-top: 0;
+      border-top: 1px solid rgba(200,155,40,0.25);
+      box-shadow: 0 -6px 28px rgba(0,24,52,0.35);
     }
+    .footer-inner {
+      max-width: 1060px; margin: 0 auto;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 10px; text-align: center;
+    }
+    @media (min-width: 640px) {
+      .footer-inner {
+        flex-direction: row;
+        text-align: left;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+      }
+    }
+    .footer-logo {
+      height: 44px; width: 44px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: #fff;
+      padding: 4px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    .footer-text { line-height: 1.65; }
     footer strong { color: var(--oro); }
+    .index-card:focus-visible {
+      outline: 2px solid var(--azul);
+      outline-offset: 2px;
+    }
+
+    /* Grillas (calculadora vértice — responsive sin inline) */
+    .coef-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      max-width: 420px;
+    }
+    .vr-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    /* Alturas gráficos Canvas (JS usa el rect del contenedor) */
+    #main-plot { height: 380px; }
+    #vertice-plot, #ej1-plot, #ej2-plot { height: 340px; }
+    #ej3-plot { height: 320px; }
+
+    /* ── RESPONSIVE MÓVIL ── */
+    @media (max-width: 640px) {
+      html { -webkit-text-size-adjust: 100%; }
+      .container { padding-left: 1rem; padding-right: 1rem; }
+      .hero {
+        padding: 40px 1rem 48px;
+      }
+      .hero-emblem { width: 72px; height: 72px; margin-bottom: 16px; }
+      .hero-badge { font-size: 0.7rem; letter-spacing: 1.2px; padding: 5px 14px; }
+      .hero h1 { font-size: clamp(1.45rem, 6.5vw, 2.1rem); }
+      .hero p { font-size: 0.95rem; margin-bottom: 22px; }
+      .section { padding: 40px 0 16px; }
+      .section-header { margin-bottom: 20px; }
+      .index-grid { margin: 28px 0 8px; gap: 10px; }
+      .card { padding: 18px 16px; margin-bottom: 16px; }
+      .control-panel { padding: 18px 16px; }
+      .controls-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .coef-grid {
+        grid-template-columns: 1fr;
+        max-width: none;
+      }
+      .vr-cards-grid { grid-template-columns: 1fr; }
+      .practica-item { padding: 16px 14px; }
+      .tabs { gap: 6px; margin-bottom: 12px; }
+      .tab-btn {
+        padding: 9px 14px;
+        font-size: 0.8rem;
+        min-height: 44px;
+      }
+      .algo-steps li { padding-left: 38px; font-size: 0.92rem; }
+      .section-num-bg {
+        font-size: 4.5rem;
+        float: none;
+        display: block;
+        text-align: right;
+        margin: -8px 0 4px;
+      }
+      .nav-brand { font-size: 0.88rem; gap: 10px; }
+      .nav-logo { height: 38px; max-width: 44px; }
+      .nav-brand-text small { font-size: 0.62rem; }
+      .nav-links a {
+        font-size: 0.74rem;
+        padding: 10px 12px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+      }
+      .nav-links { touch-action: manipulation; }
+      .card:has(> table.mapa-table),
+      .card:has(> table.dominio-table),
+      .card:has(> table.trans-table) {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .mapa-table, .dominio-table, .trans-table {
+        min-width: 520px;
+      }
+      #main-plot { height: min(300px, 58vh); }
+      #vertice-plot, #ej1-plot, #ej2-plot { height: min(280px, 52vh); }
+      #ej3-plot { height: min(260px, 48vh); }
+      footer { font-size: 0.76rem; padding: 10px 1rem calc(10px + env(safe-area-inset-bottom, 0px)); }
+      body {
+        padding-bottom: calc(8.25rem + env(safe-area-inset-bottom, 0px));
+      }
+    }
   </style>
 </head>
 <body>
 
 <!-- ═══════ NAVBAR ═══════ -->
 <nav>
-  <div class="nav-brand">
-    <span>MA-0001</span> Precálculo — UCR
-  </div>
+  <a class="nav-brand" href="#inicio" title="Inicio — MA-0001 UCR">
+    <img class="nav-logo" src="ucr.jpg" width="48" height="48" alt="Universidad de Costa Rica" />
+    <span class="nav-brand-text">
+      <span><span class="nav-accent">MA-0001</span> Precálculo</span>
+      <small>Universidad de Costa Rica</small>
+    </span>
+  </a>
   <ul class="nav-links">
     <li><a href="#mapa">Mapa</a></li>
     <li><a href="#guia">Guía</a></li>
@@ -602,8 +814,11 @@
 </nav>
 
 <!-- ═══════ HERO ═══════ -->
-<div class="hero">
-  <div class="hero-badge">MA-0001 Precálculo · UCR · Semana 4</div>
+<div class="hero" id="inicio">
+  <div class="hero-emblem" aria-hidden="true">
+    <img src="ucr.jpg" width="176" height="176" alt="" decoding="async" fetchpriority="high" />
+  </div>
+  <div class="hero-badge">MA-0001 Precálculo · Semana 4</div>
   <h1>Función polinomial<br><span style="font-size:0.55em;font-weight:600;opacity:0.95;">Graficación y factorización</span></h1>
   <p>Apoyo en línea al material de <strong>Semana 4</strong> (función polinomial): teorema del factor, raíces racionales, división sintética, intersecciones con los ejes y <strong>transformaciones de gráficas</strong> alineadas con la guía de curso.</p>
   <div class="hero-rule"></div>
@@ -729,7 +944,7 @@
         <li><strong>Identificar la función base</strong> ($x$, $x^2$, $x^3$, …).</li>
         <li><strong>Leer el efecto de los parámetros</strong> en el criterio $g(x)=k\cdot f(x-h)+a$: primero lo que ocurre <em>dentro</em> del paréntesis ($h$), luego escalas/reflexiones ($k$), luego lo que suma al final ($a$).</li>
         <li><strong>Aplicar el orden recomendado</strong> al describir transformaciones (horizontal → reflexión/escala vertical → vertical).</li>
-        <li><strong>Completar datos</strong>: vértice o inflexión, dominio, ámbito, cortes con ejes si aplica.</li>
+        <li><strong>Completar datos</strong>: vértice o inflexión, dominio, ámbito, intersecciones con los ejes si aplica.</li>
       </ol>
     </div>
 
@@ -768,7 +983,7 @@
     <div class="card verde">
       <ul class="checklist-mini">
         <li><strong>Eje $y$:</strong> evaluar $f(0)$ (sustituir $x=0$).</li>
-        <li><strong>Eje $x$:</strong> resolver $f(x)=0$. En cuadráticas, discriminar según signo de $a$ y posición del vértice para anticipar si hay 0, 1 o 2 cortes.</li>
+        <li><strong>Eje $x$:</strong> resolver $f(x)=0$. En cuadráticas, discriminar según signo de $a$ y posición del vértice para anticipar si hay 0, 1 o 2 intersecciones con el eje $x$.</li>
       </ul>
     </div>
 
@@ -977,7 +1192,7 @@
       <ul style="padding-left:1.1rem;line-height:1.85;font-size:0.95rem;">
         <li><strong>Eje $y$:</strong> $f(0)=a_0$ (único punto si el dominio es $\mathbb{R}$).</li>
         <li><strong>Eje $x$:</strong> resolver $f(x)=0$ (raíces reales).</li>
-        <li><strong>Dominio restringido $[a,b]$:</strong> reportar solo intersecciones cuyas abscisas estén en el intervalo; verificar $0\in[a,b]$ antes de dar el corte con el eje $y$.</li>
+        <li><strong>Dominio restringido $[a,b]$:</strong> reportar solo intersecciones cuyas abscisas estén en el intervalo; verificar $0\in[a,b]$ antes de reportar la intersección con el eje $y$.</li>
       </ul>
     </div>
     <div class="card nota">
@@ -989,9 +1204,9 @@
       <p>Si las raíces son $-2,\frac12,3$ pero solo puede usar $[-1,4]$, el punto $(-2,0)$ <strong>no se reporta</strong>; sí $\left(\frac12,0\right)$, $(3,0)$ y $(0,f(0))$ si $0$ está en el intervalo.</p>
     </div>
     <details class="actividad-box">
-      <summary>Actividad — Cortes con los ejes</summary>
+      <summary>Actividad — Intersecciones con los ejes</summary>
       <div class="actividad-body">
-        <p>Si $f(x)=(x-3)(2x-1)(x+2)$ (dominio $\mathbb{R}$), calcule el corte con el eje $y$ y liste los cortes con el eje $x$.</p>
+        <p>Si $f(x)=(x-3)(2x-1)(x+2)$ (dominio $\mathbb{R}$), calcule la intersección con el eje $y$ y liste las intersecciones con el eje $x$.</p>
         <details class="quiz-check" style="margin-top:10px;">
           <summary>Ver solución</summary>
           <div class="quiz-ans">Eje $y$: $f(0)=(-3)(-1)(2)=6$ → $(0,6)$. Eje $x$: $x\in\{3,\frac12,-2\}$ → $(3,0)$, $\left(\frac12,0\right)$, $(-2,0)$.</div>
@@ -1158,7 +1373,7 @@
         $g(x) = x^2$
       </div>
       <div class="plot-area">
-        <div id="main-plot" style="height:380px;"></div>
+        <div id="main-plot"></div>
       </div>
     </div>
 
@@ -1206,7 +1421,7 @@
       <p style="font-size:0.88rem;color:var(--gris);margin-bottom:16px;">
         Ingrese los coeficientes de $f(x) = ax^2 + bx + c$:
       </p>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:420px;">
+      <div class="coef-grid">
         <div class="ctrl-group">
           <label>Coef. $a$</label>
           <input type="number" id="coef-a" value="-2" step="0.5">
@@ -1225,10 +1440,10 @@
       </button>
       <div id="vertice-result" style="margin-top:16px;display:none;">
         <div class="result-box" id="vr-forma"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;" id="vr-cards"></div>
+        <div class="vr-cards-grid" id="vr-cards"></div>
         <div style="margin-top:16px;" id="vr-trans"></div>
         <div class="plot-area" style="margin-top:16px;">
-          <div id="vertice-plot" style="height:340px;"></div>
+          <div id="vertice-plot"></div>
         </div>
       </div>
     </div>
@@ -1295,7 +1510,7 @@
         <p style="margin-top:14px;"><strong>Eje $y$:</strong> $f(0)=-2(0-2)^2+5=-3$ → punto $(0,-3)$.</p>
         <p><strong>Eje $x$:</strong> $-2(x-2)^2+5=0 \Rightarrow (x-2)^2=\tfrac{5}{2} \Rightarrow x=2\pm\sqrt{\tfrac{5}{2}}$</p>
         <div class="plot-area" style="margin-top:16px;">
-          <div id="ej1-plot" style="height:340px;"></div>
+          <div id="ej1-plot"></div>
         </div>
       </div>
     </div>
@@ -1325,7 +1540,7 @@
         </div>
         <p style="margin-top:14px;"><strong>Eje $x$:</strong> $-(x-2)^3+1=0 \Rightarrow (x-2)^3=1 \Rightarrow x=3$ → $(3,0)$</p>
         <div class="plot-area" style="margin-top:16px;">
-          <div id="ej2-plot" style="height:340px;"></div>
+          <div id="ej2-plot"></div>
         </div>
       </div>
     </div>
@@ -1336,7 +1551,7 @@
         <div class="card-title">Ejemplo 12 — Leer el criterio desde la gráfica</div>
         <p style="margin-bottom:14px;">Dada la gráfica siguiente, determine el criterio $f(x)$.</p>
         <div class="plot-area">
-          <div id="ej3-plot" style="height:320px;"></div>
+          <div id="ej3-plot"></div>
         </div>
         <div class="steps" style="margin-top:16px;">
           <div class="step"><div class="step-num"></div>
@@ -1376,7 +1591,7 @@
 
     <div class="card nota" style="margin-bottom:20px;">
       <div class="card-title">Instrucciones (criterio tipo MA-0001)</div>
-      <p>Para cada función de esta página: <strong>(i)</strong> función base, <strong>(ii)</strong> transformaciones <strong>en el orden del curso</strong> (horizontal → reflexión/escala vertical → vertical), <strong>(iii)</strong> dominio, ámbito y cortes con los ejes, <strong>(iv)</strong> boceto o análisis cualitativo.</p>
+      <p>Para cada función de esta página: <strong>(i)</strong> función base, <strong>(ii)</strong> transformaciones <strong>en el orden del curso</strong> (horizontal → reflexión/escala vertical → vertical), <strong>(iii)</strong> dominio, ámbito e intersecciones con los ejes, <strong>(iv)</strong> boceto o análisis cualitativo.</p>
       <p style="margin-top:10px;font-size:0.88rem;color:var(--gris);"><span class="level-pill n1">Nivel 1</span> criterio ya en forma transformada. <span class="level-pill n2">Nivel 2</span> completar el cuadrado o armar el criterio desde datos.</p>
     </div>
 
@@ -1432,8 +1647,13 @@
 
 <!-- ═══════ FOOTER ═══════ -->
 <footer>
-  <strong>MA-0001 Precálculo</strong> · Universidad de Costa Rica · Escuela de Matemática<br>
-  Elaborado por <strong>Prof. Francisco Campos S.</strong> · Semana 4 · 2026
+  <div class="footer-inner">
+    <img class="footer-logo" src="ucr.jpg" width="88" height="88" alt="Universidad de Costa Rica" loading="lazy" decoding="async" />
+    <div class="footer-text">
+      <strong>MA-0001 Precálculo</strong> · Escuela de Matemática · Universidad de Costa Rica<br>
+      Elaborado por <strong>Prof. Francisco Campos S.</strong> · Semana 4 · 2026
+    </div>
+  </div>
 </footer>
 
 <!-- ═══════ SCRIPTS ═══════ -->
