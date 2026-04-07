@@ -225,6 +225,7 @@
       border: 1px solid rgba(0,56,116,0.1);
       background: #fff;
     }
+    .plot-area canvas.ma-plot { display: block; width: 100%; height: 100%; }
     .formula-display {
       background: var(--azul); color: #fff;
       padding: 10px 18px; border-radius: 8px;
@@ -714,8 +715,7 @@
 </footer>
 
 <!-- ═══════ SCRIPTS ═══════ -->
-<!-- Plotly: archivo local en el repo (funciona en GitHub Pages sin depender del CDN) -->
-<script src="plotly.min.js"></script>
+<!-- Gráficas con Canvas 2D (sin Plotly ni CDN: funciona siempre en GitHub Pages) -->
 <script>
 // ──────────────────────────────────────────
 // Paleta UCR
@@ -726,24 +726,213 @@ const C_VERDE = '#00643c';
 const C_ROJO  = '#b41e1e';
 const C_GRIS  = '#aaaaaa';
 
-const plotLayout = (xr, yr, title='') => ({
-  title: { text: title, font: { size: 13, color: C_AZUL }, y: 0.97 },
-  margin: { l:50, r:30, t:40, b:40 },
-  paper_bgcolor: '#ffffff', plot_bgcolor: '#f9fbff',
-  xaxis: {
-    range: xr, zeroline: true, zerolinecolor: '#aaa', zerolinewidth: 1.5,
-    gridcolor: 'rgba(0,56,116,0.08)', tickfont: { size: 11 }, title: 'x'
-  },
-  yaxis: {
-    range: yr, zeroline: true, zerolinecolor: '#aaa', zerolinewidth: 1.5,
-    gridcolor: 'rgba(0,56,116,0.08)', tickfont: { size: 11 }, title: 'y'
-  },
-  legend: { x: 0.01, y: 0.99, bgcolor: 'rgba(255,255,255,0.85)',
-    bordercolor: 'rgba(0,56,116,0.15)', borderwidth: 1 },
-  font: { family: 'Inter, sans-serif' }
-});
-
 const linspace = (a, b, n=200) => Array.from({length:n}, (_,i) => a + i*(b-a)/(n-1));
+
+// ──────────────────────────────────────────
+// Gráficas Canvas (reemplazo de Plotly)
+// ──────────────────────────────────────────
+function _niceStep(range, targetDivs) {
+  const rough = range / Math.max(targetDivs, 1);
+  if (rough === 0 || !isFinite(rough)) return 1;
+  const p = Math.pow(10, Math.floor(Math.log10(Math.abs(rough))));
+  const n = rough / p;
+  const f = n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10;
+  return f * p;
+}
+
+function _ticks(min, max, count) {
+  const step = _niceStep(max - min, count);
+  const out = [];
+  let x = Math.ceil(min / step - 1e-9) * step;
+  while (x <= max + step * 0.001 && out.length < 30) {
+    out.push(x);
+    x += step;
+  }
+  return out.length ? out : [min];
+}
+
+function renderPlot(containerId, traces, xrange, yrange, title) {
+  const parent = document.getElementById(containerId);
+  if (!parent) return;
+
+  let canvas = parent.querySelector('canvas.ma-plot');
+  if (!canvas) {
+    parent.innerHTML = '';
+    canvas = document.createElement('canvas');
+    canvas.className = 'ma-plot';
+    canvas.setAttribute('role', 'img');
+    canvas.setAttribute('aria-label', title || 'Gráfica de función');
+    parent.appendChild(canvas);
+  }
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const W = Math.max(parent.clientWidth || 300, 200);
+  const H = Math.max(parent.clientHeight || 300, 200);
+  canvas.width = Math.floor(W * dpr);
+  canvas.height = Math.floor(H * dpr);
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const M = { l: 52, r: 108, t: title ? 36 : 28, b: 44 };
+  const plotL = M.l, plotT = M.t, plotW = W - M.l - M.r, plotH = H - M.t - M.b;
+
+  const xMin = xrange[0], xMax = xrange[1];
+  const yMin = yrange[0], yMax = yrange[1];
+  const xSpan = Math.max(xMax - xMin, 1e-9);
+  const ySpan = Math.max(yMax - yMin, 1e-9);
+
+  const toSX = (x) => plotL + ((x - xMin) / xSpan) * plotW;
+  const toSY = (y) => plotT + plotH - ((y - yMin) / ySpan) * plotH;
+
+  ctx.fillStyle = '#f9fbff';
+  ctx.fillRect(plotL, plotT, plotW, plotH);
+  ctx.strokeStyle = 'rgba(0,56,116,0.12)';
+  ctx.lineWidth = 1;
+
+  const xTicks = _ticks(xMin, xMax, 6);
+  const yTicks = _ticks(yMin, yMax, 6);
+  xTicks.forEach((tx) => {
+    const sx = toSX(tx);
+    ctx.beginPath();
+    ctx.moveTo(sx, plotT);
+    ctx.lineTo(sx, plotT + plotH);
+    ctx.stroke();
+  });
+  yTicks.forEach((ty) => {
+    const sy = toSY(ty);
+    ctx.beginPath();
+    ctx.moveTo(plotL, sy);
+    ctx.lineTo(plotL + plotW, sy);
+    ctx.stroke();
+  });
+
+  if (xMin < 0 && xMax > 0) {
+    const zx = toSX(0);
+    ctx.strokeStyle = '#bbbbbb';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(zx, plotT);
+    ctx.lineTo(zx, plotT + plotH);
+    ctx.stroke();
+  }
+  if (yMin < 0 && yMax > 0) {
+    const zy = toSY(0);
+    ctx.strokeStyle = '#bbbbbb';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(plotL, zy);
+    ctx.lineTo(plotL + plotW, zy);
+    ctx.stroke();
+  }
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(plotL, plotT, plotW, plotH);
+  ctx.clip();
+
+  traces.forEach((tr) => {
+    if (tr.mode === 'markers') return;
+    if (!tr.x || !tr.y || tr.x.length < 2) return;
+    const lw = tr.line?.width ?? 2;
+    const col = tr.line?.color || C_AZUL;
+    ctx.strokeStyle = col;
+    ctx.lineWidth = lw;
+    ctx.setLineDash(tr.line?.dash === 'dot' ? [4, 4] : []);
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < tr.x.length; i++) {
+      const px = toSX(tr.x[i]), py = toSY(tr.y[i]);
+      if (!isFinite(px) || !isFinite(py)) { started = false; continue; }
+      if (!started) { ctx.moveTo(px, py); started = true; }
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+  });
+
+  traces.forEach((tr) => {
+    if (tr.mode !== 'markers') return;
+    if (!tr.x || !tr.y) return;
+    const col = tr.marker?.color || tr.line?.color || C_AZUL;
+    const r = (tr.marker?.size ?? 9) / 2;
+    ctx.fillStyle = col;
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < (tr.x?.length || 0); i++) {
+      const px = toSX(tr.x[i]), py = toSY(tr.y[i]);
+      if (!isFinite(px) || !isFinite(py)) continue;
+      ctx.beginPath();
+      ctx.arc(px, py, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+  });
+
+  ctx.restore();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, M.t);
+  if (title) {
+    ctx.fillStyle = C_AZUL;
+    ctx.font = '600 13px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(title, W / 2, 22);
+  }
+
+  ctx.fillStyle = '#5a6e89';
+  ctx.font = '11px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('x', W / 2, H - 10);
+  ctx.save();
+  ctx.translate(14, plotT + plotH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('y', 0, 0);
+  ctx.restore();
+
+  ctx.fillStyle = '#0d1a2e';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  xTicks.forEach((tx) => {
+    const sx = toSX(tx);
+    const lab = Math.abs(tx) < 1e-6 ? '0' : (Math.abs(tx - Math.round(tx)) < 1e-4 ? String(Math.round(tx)) : tx.toFixed(1));
+    ctx.fillText(lab, sx, plotT + plotH + 6);
+  });
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  yTicks.forEach((ty) => {
+    const sy = toSY(ty);
+    const lab = Math.abs(ty) < 1e-6 ? '0' : (Math.abs(ty - Math.round(ty)) < 1e-4 ? String(Math.round(ty)) : ty.toFixed(1));
+    ctx.fillText(lab, plotL - 8, sy);
+  });
+
+  let ly = M.t + 8;
+  const legend = traces.filter((t) => t.name);
+  ctx.font = '10px Inter, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  legend.forEach((tr) => {
+    const col = tr.marker?.color || tr.line?.color || C_AZUL;
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    const tw = Math.min(ctx.measureText(tr.name).width + 18, M.r - 8);
+    ctx.fillRect(W - M.r + 4, ly - 6, tw, 14);
+    ctx.strokeStyle = 'rgba(0,56,116,0.15)';
+    ctx.strokeRect(W - M.r + 4, ly - 6, tw, 14);
+    ctx.fillStyle = col;
+    ctx.fillRect(W - M.r + 8, ly - 3, 10, 6);
+    ctx.fillStyle = C_AZUL;
+    ctx.fillText(tr.name, W - M.r + 22, ly);
+    ly += 16;
+  });
+
+  const redraw = () => renderPlot(containerId, traces, xrange, yrange, title);
+  if (!parent._maObs) {
+    parent._maObs = new ResizeObserver(() => redraw());
+    parent._maObs.observe(parent);
+  }
+}
 
 function fnBase(type, x) {
   if (type==='linear') return x;
@@ -797,59 +986,55 @@ function updatePlot() {
     ];
 
     const yr = type==='cubic' ? [-15,15] : [-6,15];
-    const layout = plotLayout([-6,6], yr);
-
-    // Renderizar
-    if (typeof Plotly !== 'undefined') {
-      Plotly.newPlot('main-plot', traces, layout, {responsive:true, displayModeBar:true});
-    }
+    renderPlot('main-plot', traces, [-6, 6], yr, '');
   } catch (e) {
     console.error('Error en updatePlot:', e);
   }
 }
 
 // ──────────────────────────────────────────
-// EJEMPLOS FIJOS (definir ANTES de initPlotly)
+// EJEMPLOS FIJOS
 // ──────────────────────────────────────────
+function drawEj1() {
+  const xs = linspace(-1, 5, 300);
+  const ys1 = xs.map((x) => x * x);
+  const ys2 = xs.map((x) => -2 * (x - 2) ** 2 + 5);
+  const x0 = [2 - Math.sqrt(2.5), 2 + Math.sqrt(2.5)];
+  renderPlot('ej1-plot', [
+    { x: xs, y: ys1, mode: 'lines', name: 'y = x²', line: { color: C_GRIS, dash: 'dot', width: 2 } },
+    { x: xs, y: ys2, mode: 'lines', name: 'f(x)=−2(x−2)²+5', line: { color: C_AZUL, width: 3 } },
+    { x: [2], y: [5], mode: 'markers', name: 'Vértice (2,5)', marker: { color: C_ORO, size: 12 } },
+    { x: [0], y: [-3], mode: 'markers', name: 'Eje y (0,−3)', marker: { color: C_ROJO, size: 9 } },
+    { x: x0, y: [0, 0], mode: 'markers', name: 'Eje x', marker: { color: C_VERDE, size: 9 } }
+  ], [-1, 5], [-6, 7], 'f(x) = −2(x−2)² + 5');
+}
+
+function drawEj2() {
+  const xs = linspace(-0.5, 4.5, 300);
+  const ys1 = xs.map((x) => x ** 3);
+  const ys2 = xs.map((x) => -((x - 2) ** 3) + 1);
+  renderPlot('ej2-plot', [
+    { x: xs, y: ys1, mode: 'lines', name: 'y = x³', line: { color: C_GRIS, dash: 'dot', width: 2 } },
+    { x: xs, y: ys2, mode: 'lines', name: 'g(x)=−(x−2)³+1', line: { color: C_AZUL, width: 3 } },
+    { x: [2], y: [1], mode: 'markers', name: 'Inflexión (2,1)', marker: { color: C_ORO, size: 12 } },
+    { x: [0], y: [9], mode: 'markers', name: 'Eje y (0,9)', marker: { color: C_ROJO, size: 9 } },
+    { x: [3], y: [0], mode: 'markers', name: 'Eje x (3,0)', marker: { color: C_VERDE, size: 9 } }
+  ], [-0.5, 4.5], [-9, 11], 'g(x) = −(x−2)³ + 1');
+}
+
+function drawEj3() {
+  const xs = linspace(-2, 5, 300);
+  const ys = xs.map((x) => (x - 1) ** 2 + 2);
+  renderPlot('ej3-plot', [
+    { x: xs, y: ys, mode: 'lines', name: 'f(x)=?', line: { color: C_AZUL, width: 3 } },
+    { x: [1], y: [2], mode: 'markers', name: '(1, 2)', marker: { color: C_ORO, size: 12 } }
+  ], [-2, 5], [-1, 9], '¿Cuál es el criterio?');
+}
+
 function initExamples() {
-  // Ej 1: f(x) = -2(x-2)^2 + 5
-  (function() {
-    const xs = linspace(-1, 5, 300);
-    const ys1 = xs.map(x => x*x);
-    const ys2 = xs.map(x => -2*(x-2)**2+5);
-    const x0 = [2-Math.sqrt(2.5), 2+Math.sqrt(2.5)];
-    Plotly.newPlot('ej1-plot', [
-      {x:xs, y:ys1, mode:'lines', name:'y = x²', line:{color:C_GRIS, dash:'dot', width:2}},
-      {x:xs, y:ys2, mode:'lines', name:'f(x)=−2(x−2)²+5', line:{color:C_AZUL, width:3}},
-      {x:[2], y:[5], mode:'markers', name:'Vértice (2,5)', marker:{color:C_ORO, size:12}},
-      {x:[0], y:[-3], mode:'markers', name:'Eje y (0,−3)', marker:{color:C_ROJO, size:9}},
-      {x:x0, y:[0,0], mode:'markers', name:'Eje x', marker:{color:C_VERDE, size:9}}
-    ], plotLayout([-1,5],[-6,7],'f(x) = −2(x−2)² + 5'), {responsive:true, displayModeBar:true});
-  })();
-
-  // Ej 2: g(x) = -(x-2)^3 + 1
-  (function() {
-    const xs = linspace(-0.5, 4.5, 300);
-    const ys1 = xs.map(x => x**3);
-    const ys2 = xs.map(x => -(x-2)**3+1);
-    Plotly.newPlot('ej2-plot', [
-      {x:xs, y:ys1, mode:'lines', name:'y = x³', line:{color:C_GRIS, dash:'dot', width:2}},
-      {x:xs, y:ys2, mode:'lines', name:'g(x)=−(x−2)³+1', line:{color:C_AZUL, width:3}},
-      {x:[2], y:[1], mode:'markers', name:'Inflexión (2,1)', marker:{color:C_ORO, size:12}},
-      {x:[0], y:[9], mode:'markers', name:'Eje y (0,9)', marker:{color:C_ROJO, size:9}},
-      {x:[3], y:[0], mode:'markers', name:'Eje x (3,0)', marker:{color:C_VERDE, size:9}}
-    ], plotLayout([-0.5,4.5],[-9,11],'g(x) = −(x−2)³ + 1'), {responsive:true, displayModeBar:true});
-  })();
-
-  // Ej 3: f(x) = (x-1)^2 + 2
-  (function() {
-    const xs = linspace(-2, 5, 300);
-    const ys = xs.map(x => (x-1)**2+2);
-    Plotly.newPlot('ej3-plot', [
-      {x:xs, y:ys, mode:'lines', name:'f(x)=?', line:{color:C_AZUL, width:3}},
-      {x:[1], y:[2], mode:'markers', name:'(1, 2)', marker:{color:C_ORO, size:12}}
-    ], plotLayout([-2,5],[-1,9],'¿Cuál es el criterio?'), {responsive:true, displayModeBar:true});
-  })();
+  drawEj1();
+  drawEj2();
+  drawEj3();
 }
 
 // Esperar a que DOM esté listo
@@ -880,14 +1065,6 @@ function setupEventListeners() {
 }
 
 function initCharts() {
-  if (typeof Plotly === 'undefined') {
-    const msg = '<p style="padding:1.5rem;text-align:center;color:var(--rojo);font-size:0.95rem;">No se pudo cargar Plotly (<code>plotly.min.js</code>). Asegúrese de subir ese archivo junto a <code>index.html</code> en el repositorio.</p>';
-    ['main-plot', 'ej1-plot', 'ej2-plot', 'ej3-plot', 'vertice-plot'].forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) el.innerHTML = msg;
-    });
-    return;
-  }
   try {
     setupEventListeners();
     updatePlot();
@@ -978,19 +1155,19 @@ function calcVertice() {
       marker:{color:C_VERDE, size:9}});
   }
 
-  if (typeof Plotly !== 'undefined') {
-    Plotly.react('vertice-plot', [
-      {x:xs, y:ysBase, mode:'lines', name:'f(x)=x²',
-       line:{color:C_GRIS, dash:'dot', width:2}},
-      {x:xs, y:ysNew, mode:'lines', name:`f(x)=${aDisp}(x${h>=0?'−':'+'}${Math.abs(h)})²${k>=0?'+':''}${kDisp}`,
-       line:{color:C_AZUL, width:3}},
-      {x:[h], y:[k], mode:'markers', name:`Vértice (${hDisp},${kDisp})`,
-       marker:{color:C_ORO, size:11, symbol:'circle'}},
-      {x:[0], y:[c], mode:'markers', name:`Eje y (0,${c})`,
-       marker:{color:C_ROJO, size:9}},
-      ...rootTraces
-    ], plotLayout([xCenter-xRange, xCenter+xRange], [Math.min(...ysNew)-3, Math.max(...ysNew)+3]), {responsive:true, displayModeBar:true});
-  }
+  const yLo = Math.min(...ysNew) - 3;
+  const yHi = Math.max(...ysNew) + 3;
+  renderPlot('vertice-plot', [
+    { x: xs, y: ysBase, mode: 'lines', name: 'f(x)=x²',
+      line: { color: C_GRIS, dash: 'dot', width: 2 } },
+    { x: xs, y: ysNew, mode: 'lines', name: `f(x)=${aDisp}(x${h >= 0 ? '−' : '+'}${Math.abs(h)})²${k >= 0 ? '+' : ''}${kDisp}`,
+      line: { color: C_AZUL, width: 3 } },
+    { x: [h], y: [k], mode: 'markers', name: `Vértice (${hDisp},${kDisp})`,
+      marker: { color: C_ORO, size: 11 } },
+    { x: [0], y: [c], mode: 'markers', name: `Eje y (0,${c})`,
+      marker: { color: C_ROJO, size: 9 } },
+    ...rootTraces
+  ], [xCenter - xRange, xCenter + xRange], [yLo, yHi], '');
 }
 
 // ──────────────────────────────────────────
@@ -1001,11 +1178,10 @@ function openTab(id, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
-  // Re-render Plotly en pestaña activa
   setTimeout(() => {
-    if (typeof Plotly === 'undefined') return;
-    const pid = id==='ej1'?'ej1-plot':id==='ej2'?'ej2-plot':'ej3-plot';
-    Plotly.relayout(pid, {autosize:true});
+    if (id === 'ej1') drawEj1();
+    else if (id === 'ej2') drawEj2();
+    else if (id === 'ej3') drawEj3();
   }, 100);
 }
 
