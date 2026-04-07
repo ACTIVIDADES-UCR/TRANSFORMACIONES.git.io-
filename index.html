@@ -309,6 +309,129 @@
       font-size: 1rem;
     }
 
+    .mini-nav {
+      font-size: 0.88rem;
+      color: var(--gris);
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+    .mini-nav a { color: var(--azul); font-weight: 600; text-decoration: none; border-bottom: 1px dashed rgba(0,56,116,0.35); }
+    .mini-nav a:hover { color: var(--oro); border-bottom-color: var(--oro); }
+
+    .mapa-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .mapa-table th { text-align: left; background: rgba(0,56,116,0.1); color: var(--azul); padding: 10px 12px; font-weight: 600; }
+    .mapa-table td { padding: 10px 12px; border-bottom: 1px solid rgba(0,56,116,0.08); vertical-align: top; }
+    .mapa-table td:first-child { font-weight: 600; color: var(--azul); white-space: nowrap; }
+
+    .pre-schema {
+      font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+      font-size: 0.82rem;
+      background: #f4f7fd;
+      border: 1px solid rgba(0,56,116,0.12);
+      border-radius: 8px;
+      padding: 12px 14px;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+
+    /* División sintética (esquema Ruffini) */
+    .synthetic-wrap {
+      margin: 14px 0;
+      overflow-x: auto;
+      display: flex;
+      justify-content: center;
+    }
+    .synthetic-table {
+      border-collapse: collapse;
+      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      font-variant-numeric: tabular-nums;
+      font-size: 1rem;
+      background: linear-gradient(180deg, #fbfcfe 0%, #f4f7fd 100%);
+      border: 1.5px solid rgba(0,56,116,0.18);
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,56,116,0.06);
+    }
+    .synthetic-table td {
+      padding: 10px 16px;
+      text-align: center;
+      min-width: 2.75rem;
+      border-left: 1px solid rgba(0,56,116,0.08);
+    }
+    .synthetic-table td:first-child {
+      border-left: none;
+    }
+    .synthetic-table tr.syn-line td {
+      padding: 0;
+      line-height: 0;
+      font-size: 0;
+      border-top: 2px solid var(--azul);
+      background: transparent;
+    }
+    .synthetic-table .syn-c {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--oro);
+      vertical-align: middle;
+      border-right: 2px solid rgba(0,56,116,0.22);
+      background: rgba(200,155,40,0.08);
+    }
+    .synthetic-table .syn-gap {
+      color: rgba(0,0,0,0.06);
+      user-select: none;
+      font-size: 0.65rem;
+    }
+    .synthetic-table tr:last-child td:not(:first-child) {
+      font-weight: 700;
+      color: var(--azul);
+    }
+    .synthetic-table .syn-rem {
+      color: var(--verde) !important;
+      font-size: 1.05rem;
+    }
+    .synthetic-caption {
+      font-size: 0.8rem;
+      color: var(--gris);
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .actividad-box {
+      margin-top: 16px;
+      border: 1px dashed rgba(0,100,60,0.35);
+      border-radius: 12px;
+      padding: 0;
+      background: rgba(0,100,60,0.04);
+    }
+    .actividad-box > summary {
+      cursor: pointer;
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--verde);
+      list-style: none;
+    }
+    .actividad-box > summary::-webkit-details-marker { display: none; }
+    .actividad-box > summary::before {
+      content: '▸ ';
+      color: var(--oro);
+    }
+    .actividad-box[open] > summary::before { content: '▾ '; }
+    .actividad-body {
+      padding: 0 16px 14px 16px;
+      font-size: 0.92rem;
+      border-top: 1px solid rgba(0,100,60,0.12);
+    }
+    .actividad-body .quiz-ans { padding: 10px 0 0 0; border: none; }
+    .section-eyebrow {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gris);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
     /* ── TABLA TRANSFORMACIONES ── */
     .trans-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
     .trans-table th {
@@ -464,7 +587,12 @@
     <span>MA-0001</span> Precálculo — UCR
   </div>
   <ul class="nav-links">
+    <li><a href="#mapa">Mapa</a></li>
     <li><a href="#guia">Guía</a></li>
+    <li><a href="#factor">Factor</a></li>
+    <li><a href="#racionales">Raíces</a></li>
+    <li><a href="#sintetica">Sintética</a></li>
+    <li><a href="#intersecciones">Ejes</a></li>
     <li><a href="#intro">Tipos</a></li>
     <li><a href="#interactivo">Interactivo</a></li>
     <li><a href="#vertice">Vértice</a></li>
@@ -476,17 +604,25 @@
 <!-- ═══════ HERO ═══════ -->
 <div class="hero">
   <div class="hero-badge">MA-0001 Precálculo · UCR · Semana 4</div>
-  <h1>Graficación con<br>Transformaciones</h1>
-  <p>Material de apoyo para el curso <strong>MA-0001</strong> (Escuela de Matemática, Universidad de Costa Rica): partir de una función base, aplicar transformaciones con criterio y leer vértice o inflexión desde el criterio o la gráfica.</p>
+  <h1>Función polinomial<br><span style="font-size:0.55em;font-weight:600;opacity:0.95;">Graficación y factorización</span></h1>
+  <p>Apoyo en línea al material de <strong>Semana 4</strong> (función polinomial): teorema del factor, raíces racionales, división sintética, intersecciones con los ejes y <strong>transformaciones de gráficas</strong> alineadas con la guía de curso.</p>
   <div class="hero-rule"></div>
 </div>
 
 <!-- ═══════ ÍNDICE ═══════ -->
 <div class="container">
   <div class="index-grid">
+    <a class="index-card" href="#mapa">
+      <div class="index-num">§</div>
+      <div class="index-label">Mapa Semana 4</div>
+    </a>
     <a class="index-card" href="#guia">
       <div class="index-num">★</div>
       <div class="index-label">Guía de estudio (MA-0001)</div>
+    </a>
+    <a class="index-card" href="#factor">
+      <div class="index-num">A</div>
+      <div class="index-label">Factor · Raíces · Sintética</div>
     </a>
     <a class="index-card" href="#intro">
       <div class="index-num">1</div>
@@ -512,6 +648,66 @@
 </div>
 
 <!-- ═══════════════════════════════════════════
+     MAPA SEMANA 4 (alineado al material PDF/LaTeX)
+════════════════════════════════════════════ -->
+<div class="container">
+  <div class="section" id="mapa" style="padding-top:36px;">
+    <div class="section-header">
+      <div class="accent"></div>
+      <h2>Mapa de Semana 4</h2>
+    </div>
+    <p style="color:var(--gris);margin-bottom:18px;font-size:0.95rem;">La Semana 4 de <strong>MA-0001</strong> articula <strong>álgebra de polinomios</strong> (factor, candidatos racionales, división sintética, ceros) con <strong>geometría</strong> (intersecciones, transformaciones de gráficas, forma vértice). La tabla enlaza cada bloque del material de curso con esta página.</p>
+    <div class="card">
+      <table class="mapa-table">
+        <thead>
+          <tr>
+            <th>Material (orden típico)</th>
+            <th>Qué cubre</th>
+            <th>En esta página</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>§1 Teorema del factor</td>
+            <td>$(x-c)$ factor $\Leftrightarrow$ $f(c)=0$; parámetros con ceros dados.</td>
+            <td><a href="#factor">Teorema del factor</a></td>
+          </tr>
+          <tr>
+            <td>§2 Raíces racionales</td>
+            <td>Candidatos $p/q$; prueba y factorización.</td>
+            <td><a href="#racionales">Raíces racionales</a></td>
+          </tr>
+          <tr>
+            <td>§3 División sintética</td>
+            <td>Algoritmo, cociente, residuo, raíces repetidas.</td>
+            <td><a href="#sintetica">División sintética</a></td>
+          </tr>
+          <tr>
+            <td>§4 Intersecciones</td>
+            <td>Eje $y$: $f(0)$; eje $x$: $f(x)=0$; dominio restringido; preimagen $f(x)=k$.</td>
+            <td><a href="#intersecciones">Intersecciones</a> · <a href="#guia">checklist</a></td>
+          </tr>
+          <tr>
+            <td>§5 Transformaciones</td>
+            <td>Tabla de transformaciones, orden, máx. 3 en evaluación; forma vértice; ejemplos 10–12.</td>
+            <td><a href="#intro">Tipos</a> · <a href="#interactivo">Explorador</a> · <a href="#vertice">Vértice</a> · <a href="#ejemplos">Ejemplos</a></td>
+          </tr>
+          <tr>
+            <td>Práctica Sem. 4</td>
+            <td>Partes I–V (factor, raíces/sintética, ejes, transformaciones, desafío).</td>
+            <td><a href="#practica">Práctica</a> (selección con pistas)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card nota">
+      <div class="card-title">Nota sobre notación (guía impresa vs explorador)</div>
+      <p style="font-size:0.92rem;">En la guía PDF a veces se escribe la traslación horizontal como <strong>$y=f(x+a)$</strong> (“$a>0$ a la izquierda”). En esta web usamos <strong>$g(x)=k\,f(x-h)+c$</strong> con <strong>$h>0$ hacia la derecha</strong>. Son equivalentes: $f(x+a)=f(x-(-a))$ (cambio de variable). Lo importante es ser consistente con el documento que esté usando en cada momento.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
      GUÍA DE ESTUDIO — MA-0001
 ════════════════════════════════════════════ -->
 <div class="container">
@@ -523,8 +719,8 @@
 
     <div class="card curso">
       <div class="card-title">Cómo usar este recurso (Semana 4)</div>
-      <p>Este sitio acompaña el tema de <strong>graficación por transformaciones</strong> visto en <strong>MA-0001 Precálculo</strong>. Está pensado para que repase <em>en este orden</em>: (1) tipos de transformación y orden recomendado, (2) explorador para “sentir” el efecto de $h$, $a$ y $k$, (3) pasar de $ax^2+bx+c$ a forma vértice, (4) ejemplos tipo evaluación y (5) práctica con pistas.</p>
-      <p style="margin-top:10px;font-size:0.9rem;color:var(--gris);">La notación coincide con la del curso: traslaciones, reflexiones y elongación/compresión vertical respecto a una función base $f$.</p>
+      <p>Este sitio complementa el <strong>material de Semana 4</strong> (función polinomial) del curso: primero use el <a href="#mapa" style="color:var(--verde);font-weight:600;">mapa</a> para ubicarse; repase los bloques <a href="#factor" style="font-weight:600;color:var(--azul);">A–D</a> si trabaja factorización y ceros; luego la parte interactiva (<strong>tipos de transformación → explorador → forma vértice → ejemplos</strong>) si su foco es graficación.</p>
+      <p style="margin-top:10px;font-size:0.9rem;color:var(--gris);">Las transformaciones y el máximo de tres en evaluación siguen el criterio de la guía de curso. La práctica web es una <em>selección</em> con pistas; la lista completa está en su hoja de ejercicios.</p>
     </div>
 
     <h3 class="subsection-title">Hilo de trabajo (siempre el mismo)</h3>
@@ -603,19 +799,233 @@
 </div>
 
 <!-- ═══════════════════════════════════════════
+     POLINOMIOS — §1 a §4 (resumen alineado al material)
+════════════════════════════════════════════ -->
+<div class="container">
+  <p class="mini-nav">
+    <a href="#factor">1. Teorema del factor</a> ·
+    <a href="#racionales">2. Raíces racionales</a> ·
+    <a href="#sintetica">3. División sintética</a> ·
+    <a href="#intersecciones">4. Intersecciones con los ejes</a>
+  </p>
+
+  <div class="section" id="factor">
+    <div class="section-header">
+      <div class="accent"></div>
+      <h2>Teorema del factor</h2>
+    </div>
+    <div class="card verde">
+      <div class="card-title">Teorema del factor</div>
+      <p>Sea $f$ polinomial. Entonces $(x-c)$ es factor de $f(x)$ <strong>si y solo si</strong> $f(c)=0$. Es decir, $c$ es raíz (cero) de $f$ si y solo si $(x-c)$ divide exactamente a $f(x)$.</p>
+    </div>
+    <div class="card nota">
+      <div class="card-title">Consecuencia</div>
+      <p>Si conoce una raíz $c$, puede usar <strong>división sintética</strong> para escribir $f(x)=(x-c)\,q(x)$ con $q$ de grado uno menos. En la práctica semanal aparecen ejercicios de <strong>hallar un parámetro</strong> en el criterio dado un cero.</p>
+    </div>
+    <div class="card ejemplo">
+      <div class="card-title">Ejemplo (verificación)</div>
+      <p>Sea $f(x)=x^3-2x^2-5x+6$. Se comprueba $f(1)=0$, $f(-2)=0$, $f(3)=0$; entonces</p>
+      <p style="text-align:center;margin:10px 0;">$f(x)=(x-1)(x+2)(x-3)$.</p>
+    </div>
+    <div class="card ejemplo">
+      <div class="card-title">Parámetro desconocido</div>
+      <p>Si $f(x)=x^3+kx^2-4x+6$ y $x=-3$ es raíz, entonces $f(-3)=0$:</p>
+      <p style="text-align:center;font-size:0.95rem;">$-27+9k+12+6=0 \Rightarrow k=1$.</p>
+    </div>
+    <details class="actividad-box">
+      <summary>Actividad — ¿Es raíz?</summary>
+      <div class="actividad-body">
+        <p>Para $f(x)=x^3-6x^2+11x-6$, ¿es $c=2$ una raíz? Calcule $f(2)$ y concluya si $(x-2)$ es factor.</p>
+        <details class="quiz-check" style="margin-top:10px;">
+          <summary>Ver solución</summary>
+          <div class="quiz-ans">$f(2)=8-24+22-6=0$. Sí: $(x-2)$ es factor (Teorema del factor).</div>
+        </details>
+      </div>
+    </details>
+  </div>
+
+  <div class="section" id="racionales">
+    <div class="section-header">
+      <div class="accent"></div>
+      <h2>Teorema de las raíces racionales</h2>
+    </div>
+    <div class="card verde">
+      <div class="card-title">Enunciado</div>
+      <p>Sea $f(x)=a_n x^n+\cdots+a_0$ con coeficientes <strong>enteros</strong>. Si $\frac{p}{q}$ (fracción irreducible) es raíz racional, entonces $p\mid a_0$ y $q\mid a_n$.</p>
+    </div>
+    <div class="card nota">
+      <div class="card-title">Uso práctico</div>
+      <p>El teorema solo produce <strong>candidatos</strong>. Cada uno debe verificarse con $f(\frac{p}{q})=0$. Se puede usar calculadora para acelerar las pruebas.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Ejemplo de lista de candidatos</div>
+      <p>Para $f(x)=2x^3-3x^2-11x+6$: divisores de $a_0=6$ para $p$; de $a_n=2$ para $q$; candidatos $\pm1,\pm2,\pm3,\pm6,\pm\frac12,\pm\frac32$. Por ejemplo $f(3)=0$ identifica una raíz (luego factorice con división sintética).</p>
+    </div>
+    <details class="actividad-box">
+      <summary>Actividad — Lista de candidatos</summary>
+      <div class="actividad-body">
+        <p>Para $g(x)=x^3-6x^2+11x-6$ (coeficientes enteros, $a_3=1$, $a_0=-6$), escriba todos los candidatos racionales $\frac{p}{q}$ del teorema.</p>
+        <details class="quiz-check" style="margin-top:10px;">
+          <summary>Ver solución</summary>
+          <div class="quiz-ans">$p\in\{\pm1,\pm2,\pm3,\pm6\}$, $q=1$: candidatos $\pm1,\pm2,\pm3,\pm6$.</div>
+        </details>
+      </div>
+    </details>
+  </div>
+
+  <div class="section" id="sintetica">
+    <div class="section-header">
+      <div class="accent"></div>
+      <h2>División sintética</h2>
+    </div>
+    <div class="card def">
+      <div class="card-title">Algoritmo (dividir $f(x)$ entre $(x-c)$)</div>
+      <ol style="padding-left:1.2rem;line-height:1.85;font-size:0.92rem;">
+        <li>Coeficientes en orden decreciente; poner <strong>0</strong> si falta un término.</li>
+        <li>Escribir $c$ a la izquierda del esquema.</li>
+        <li>Bajar el primer coeficiente; multiplicar por $c$, sumar al siguiente; repetir.</li>
+        <li>El último número es el <strong>residuo</strong> ($0$ $\Leftrightarrow$ $c$ raíz).</li>
+        <li>Los anteriores son coeficientes del cociente $q(x)$ (grado $n-1$).</li>
+      </ol>
+    </div>
+    <div class="card ejemplo">
+      <div class="card-title">Esquema — $f(x)=2x^3-3x^2-11x+6$, dividir entre $(x-3)$, es decir $c=3$</div>
+      <div class="synthetic-wrap">
+        <table class="synthetic-table" aria-label="División sintética con c igual a 3">
+          <tr>
+            <td class="syn-gap">·</td>
+            <td>$2$</td>
+            <td>$-3$</td>
+            <td>$-11$</td>
+            <td>$6$</td>
+          </tr>
+          <tr>
+            <td class="syn-c">$3$</td>
+            <td class="syn-gap">·</td>
+            <td>$6$</td>
+            <td>$9$</td>
+            <td>$-6$</td>
+          </tr>
+          <tr class="syn-line">
+            <td colspan="5"></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>$2$</td>
+            <td>$3$</td>
+            <td>$-2$</td>
+            <td class="syn-rem">$0$</td>
+          </tr>
+        </table>
+      </div>
+      <p class="synthetic-caption">Última fila = coeficientes del cociente $2x^2+3x-2$ y residuo $0$ → $c=3$ es raíz.</p>
+      <p style="margin-top:10px;font-size:0.92rem;">Cociente $2x^2+3x-2=(2x-1)(x+2)$, por tanto $f(x)=(x-3)(2x-1)(x+2)$.</p>
+    </div>
+    <div class="card nota">
+      <div class="card-title">Raíz doble</div>
+      <p>Si tras la primera división el cociente sigue teniendo a $c$ como raíz, repita el proceso: aparece $(x-c)^2$ en la factorización.</p>
+      <p style="margin-top:12px;font-size:0.9rem;"><strong>Ejemplo</strong> $f(x)=x^3-4x^2+5x-2$, primera raíz $c=1$:</p>
+      <div class="synthetic-wrap">
+        <table class="synthetic-table" aria-label="Primera división sintética c igual 1">
+          <tr>
+            <td class="syn-gap">·</td>
+            <td>$1$</td>
+            <td>$-4$</td>
+            <td>$5$</td>
+            <td>$-2$</td>
+          </tr>
+          <tr>
+            <td class="syn-c">$1$</td>
+            <td class="syn-gap">·</td>
+            <td>$1$</td>
+            <td>$-3$</td>
+            <td>$2$</td>
+          </tr>
+          <tr class="syn-line">
+            <td colspan="5"></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>$1$</td>
+            <td>$-3$</td>
+            <td>$2$</td>
+            <td class="syn-rem">$0$</td>
+          </tr>
+        </table>
+      </div>
+      <p class="synthetic-caption">Cociente $x^2-3x+2$; como $q(1)=0$, se divide otra vez entre $(x-1)$ para obtener $(x-1)^2(x-2)$.</p>
+    </div>
+    <details class="actividad-box">
+      <summary>Actividad — Leer el cociente</summary>
+      <div class="actividad-body">
+        <p>En la primera tabla ($c=3$), ¿cuál es el grado del cociente y qué coeficiente lleva $x^2$?</p>
+        <details class="quiz-check" style="margin-top:10px;">
+          <summary>Ver solución</summary>
+          <div class="quiz-ans">Grado $2$; coeficiente de $x^2$ es $2$ (primera entrada de la fila inferior, antes del residuo).</div>
+        </details>
+      </div>
+    </details>
+  </div>
+
+  <div class="section" id="intersecciones">
+    <div class="section-header">
+      <div class="accent"></div>
+      <h2>Intersecciones con los ejes</h2>
+    </div>
+    <div class="card def">
+      <div class="card-title">Reglas</div>
+      <ul style="padding-left:1.1rem;line-height:1.85;font-size:0.95rem;">
+        <li><strong>Eje $y$:</strong> $f(0)=a_0$ (único punto si el dominio es $\mathbb{R}$).</li>
+        <li><strong>Eje $x$:</strong> resolver $f(x)=0$ (raíces reales).</li>
+        <li><strong>Dominio restringido $[a,b]$:</strong> reportar solo intersecciones cuyas abscisas estén en el intervalo; verificar $0\in[a,b]$ antes de dar el corte con el eje $y$.</li>
+      </ul>
+    </div>
+    <div class="card nota">
+      <div class="card-title">Ecuaciones $f(x)=k$ con $k\neq 0$</div>
+      <p>Equivale a $g(x)=f(x)-k=0$ (buscar ceros de un polinomio auxiliar). Es la idea de <strong>preimagen</strong> usada en la práctica.</p>
+    </div>
+    <div class="card ejemplo">
+      <div class="card-title">Dominio restringido (idea)</div>
+      <p>Si las raíces son $-2,\frac12,3$ pero solo puede usar $[-1,4]$, el punto $(-2,0)$ <strong>no se reporta</strong>; sí $\left(\frac12,0\right)$, $(3,0)$ y $(0,f(0))$ si $0$ está en el intervalo.</p>
+    </div>
+    <details class="actividad-box">
+      <summary>Actividad — Cortes con los ejes</summary>
+      <div class="actividad-body">
+        <p>Si $f(x)=(x-3)(2x-1)(x+2)$ (dominio $\mathbb{R}$), calcule el corte con el eje $y$ y liste los cortes con el eje $x$.</p>
+        <details class="quiz-check" style="margin-top:10px;">
+          <summary>Ver solución</summary>
+          <div class="quiz-ans">Eje $y$: $f(0)=(-3)(-1)(2)=6$ → $(0,6)$. Eje $x$: $x\in\{3,\frac12,-2\}$ → $(3,0)$, $\left(\frac12,0\right)$, $(-2,0)$.</div>
+        </details>
+      </div>
+    </details>
+    <details class="actividad-box">
+      <summary>Actividad — Preimagen $f(x)=k$</summary>
+      <div class="actividad-body">
+        <p>¿Por qué hallar $x$ tal que $f(x)=4$ equivale a hallar ceros de $g(x)=f(x)-4$?</p>
+        <details class="quiz-check" style="margin-top:10px;">
+          <summary>Ver solución</summary>
+          <div class="quiz-ans">$f(x)=4 \Leftrightarrow f(x)-4=0 \Leftrightarrow g(x)=0$. Los $x$ buscados son las raíces reales de $g$.</div>
+        </details>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
      SECCIÓN 1 — TIPOS DE TRANSFORMACIONES
 ════════════════════════════════════════════ -->
 <div class="container">
   <div class="section" id="intro">
     <div class="section-header">
       <div class="accent"></div>
-      <h2>1. Tipos de Transformaciones</h2>
+      <h2>Tipos de Transformaciones</h2>
     </div>
+    <span class="section-eyebrow">Sección 5 del material de Semana 4 · Gráficas básicas</span>
 
     <div class="card def">
       <div class="card-title">Regla general</div>
       <p>Partimos siempre de una <strong>función base</strong> $f(x)=x^n$ y aplicamos transformaciones para obtener nuevas funciones. Para evaluación, cada criterio tendrá <strong>máximo 3 transformaciones</strong>.</p>
-      <p style="margin-top:10px;font-size:0.9rem;color:var(--gris);">Si repasa primero la <a href="#guia" style="color:var(--azul);font-weight:600;">Guía de estudio MA-0001</a>, conectará más rápido la tabla con el explorador interactivo.</p>
+      <p style="margin-top:10px;font-size:0.9rem;color:var(--gris);">Si repasa primero la <a href="#guia" style="color:var(--azul);font-weight:600;">Guía de estudio MA-0001</a> y el <a href="#mapa" style="color:var(--azul);font-weight:600;">mapa</a>, conectará la tabla con el explorador y con la guía impresa.</p>
     </div>
 
     <div class="card">
@@ -657,6 +1067,11 @@
       </table>
     </div>
 
+    <div class="card curso">
+      <div class="card-title">Equivalencia con la tabla de la guía impresa ($f(x+a)$)</div>
+      <p style="font-size:0.92rem;">En el PDF de Semana 4 a veces aparece <strong>$y=f(x+a)$</strong> para traslación horizontal. Aquí usamos <strong>$f(x-h)$</strong>: son la misma idea con $h=-a$. Por ejemplo, $f(x+2)=f(x-(-2))$ desplaza a la <em>izquierda</em> 2 unidades.</p>
+    </div>
+
     <div class="card nota">
       <div class="card-title">⭐ Orden recomendado al aplicar</div>
       <div class="steps">
@@ -665,6 +1080,22 @@
         <div class="step"><div class="step-num"></div><p><strong>Traslación vertical</strong>: subir o bajar la curva completa.</p></div>
       </div>
     </div>
+
+    <div class="card confusion">
+      <div class="card-title">Evaluación (criterio de la guía)</div>
+      <p style="font-size:0.92rem;">En las rúbricas del curso los criterios suelen tener <strong>a lo sumo tres transformaciones</strong> en el sentido en que las lista la guía. Un ejemplo que <em>sí</em> requiere desglosar con cuidado es $y=-2(x+2)^2-5$ (traslación horizontal, reflexión/escala y traslación vertical): en clase se discute cómo contabilizarlas sin pasarse del formato esperado.</p>
+    </div>
+
+    <details class="actividad-box">
+      <summary>Actividad — Forma vértice sin gráfica</summary>
+      <div class="actividad-body">
+        <p>Escriba el vértice de $f(x)=-2(x-2)^2+5$ y diga si la parábola abre hacia arriba o hacia abajo.</p>
+        <details class="quiz-check" style="margin-top:10px;">
+          <summary>Ver solución</summary>
+          <div class="quiz-ans">Vértice $(2,\,5)$. Como el coeficiente de $(x-2)^2$ es $-2&lt;0$, abre hacia <strong>abajo</strong>.</div>
+        </details>
+      </div>
+    </details>
 
   </div><!-- /.section -->
 </div>
@@ -690,7 +1121,7 @@
         <li>Cambie la <strong>función base</strong> y repita: compare parábola vs cúbica.</li>
       </ol>
       <div class="color-key">
-        <span><i style="background:var(--azul)"></i> Traslaciones / reflexiones (tabla §1)</span>
+        <span><i style="background:var(--azul)"></i> Traslaciones / reflexiones (tabla anterior)</span>
         <span><i style="background:var(--oro)"></i> Escala vertical $k$</span>
         <span><i style="background:var(--rojo)"></i> Reflexión con eje $x$ o $y$</span>
       </div>
@@ -877,9 +1308,9 @@
         <div class="card def" style="margin-top:14px;">
           <div class="card-title">Transformaciones desde $y=x^3$</div>
           <ol style="padding-left:1.2rem;font-size:0.95rem;line-height:2;">
-            <li>Traslación horizontal $+2$ → punto de inflexión pasa a $(2,0)$</li>
-            <li>Reflexión con el eje $x$ → la curva se voltea verticalmente</li>
-            <li>Traslación vertical $+1$ → inflexión queda en $(2,1)$</li>
+            <li>Traslación horizontal $+2$: respecto a $y=x^3$, la inflexión va a $(2,0)$.</li>
+            <li>Reflexión con el eje $x$ sobre esa curva trasladada (sigue en $x=2$).</li>
+            <li>Traslación vertical $+1$ → inflexión final en $(2,1)$.</li>
           </ol>
         </div>
         <div class="two-col" style="margin-top:14px;">
@@ -939,9 +1370,14 @@
     </div>
 
     <div class="card nota" style="margin-bottom:20px;">
+      <div class="card-title">Relación con la práctica oficial (Semana 4)</div>
+      <p>En la hoja de ejercicios del curso, la práctica está organizada en <strong>Parte I</strong> (teorema del factor y parámetros), <strong>Parte II</strong> (candidatos racionales y división sintética), <strong>Parte III</strong> (intersecciones, dominio restringido, preimagen $f(x)=k$), <strong>Parte IV</strong> (graficación por transformaciones, completar cuadrado, criterio desde descripción o gráfica) y <strong>Parte V</strong> (desafío). Aquí hay una <strong>muestra</strong> centrada en Parte IV con pistas; para factorización y ceros use los apartados <a href="#factor" style="font-weight:600;color:var(--azul);">A–D</a> y su PDF.</p>
+    </div>
+
+    <div class="card nota" style="margin-bottom:20px;">
       <div class="card-title">Instrucciones (criterio tipo MA-0001)</div>
-      <p>Para cada función: <strong>(i)</strong> función base, <strong>(ii)</strong> lista de transformaciones <strong>en el orden del curso</strong> (horizontal → reflexión/escala vertical → vertical), <strong>(iii)</strong> dominio, ámbito y cortes con los ejes, <strong>(iv)</strong> boceto o análisis cualitativo de la gráfica.</p>
-      <p style="margin-top:10px;font-size:0.88rem;color:var(--gris);"><span class="level-pill n1">Nivel 1</span> manipulación directa del criterio. <span class="level-pill n2">Nivel 2</span> requiere completar el cuadrado o construir desde datos.</p>
+      <p>Para cada función de esta página: <strong>(i)</strong> función base, <strong>(ii)</strong> transformaciones <strong>en el orden del curso</strong> (horizontal → reflexión/escala vertical → vertical), <strong>(iii)</strong> dominio, ámbito y cortes con los ejes, <strong>(iv)</strong> boceto o análisis cualitativo.</p>
+      <p style="margin-top:10px;font-size:0.88rem;color:var(--gris);"><span class="level-pill n1">Nivel 1</span> criterio ya en forma transformada. <span class="level-pill n2">Nivel 2</span> completar el cuadrado o armar el criterio desde datos.</p>
     </div>
 
     <div class="practica-item">
@@ -1037,6 +1473,27 @@ function _ticks(min, max, count) {
   return out.length ? out : [min];
 }
 
+/** Tamaño real del contenedor (evita canvas vacío antes del layout o en pestañas ocultas). */
+function plotBoxSize(el) {
+  let w = el.clientWidth || el.offsetWidth;
+  let h = el.clientHeight || el.offsetHeight;
+  const r = el.getBoundingClientRect();
+  if (w < 8) w = r.width || 0;
+  if (h < 8) h = r.height || 0;
+  const st = el.getAttribute('style') || '';
+  const mh = st.match(/height\s*:\s*(\d+)\s*px/i);
+  if (h < 8 && mh) h = parseInt(mh[1], 10);
+  const mw = st.match(/width\s*:\s*(\d+)\s*px/i);
+  if (w < 8 && mw) w = parseInt(mw[1], 10);
+  if (w < 8 && el.parentElement) {
+    const pw = el.parentElement.clientWidth || el.parentElement.offsetWidth;
+    if (pw > 8) w = pw;
+  }
+  w = Math.max(w || 320, 200);
+  h = Math.max(h || 320, 200);
+  return { w, h };
+}
+
 function renderPlot(containerId, traces, xrange, yrange, title) {
   const parent = document.getElementById(containerId);
   if (!parent) return;
@@ -1052,8 +1509,7 @@ function renderPlot(containerId, traces, xrange, yrange, title) {
   }
 
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const W = Math.max(parent.clientWidth || 300, 200);
-  const H = Math.max(parent.clientHeight || 300, 200);
+  const { w: W, h: H } = plotBoxSize(parent);
   canvas.width = Math.floor(W * dpr);
   canvas.height = Math.floor(H * dpr);
   canvas.style.width = W + 'px';
@@ -1255,15 +1711,19 @@ function updatePlot() {
     if (aDisplay) aDisplay.textContent = `a = ${a}`;
     if (kDisplay) kDisplay.textContent = `k = ${k}`;
 
-    // Fórmula
+    // Fórmula ($g(x)=k\,f(x-h)+a$; si $k=0$, la gráfica es la constante $a$)
     const baseLabel = type==='linear'?'x': type==='quad'?'x²':'x³';
     let formula = 'g(x) = ';
-    if (Math.abs(k)!==1) formula += k < 0 ? `−${Math.abs(k)}` : `${k}`;
-    else if (k===-1) formula += '−';
-    const hStr = h===0 ? 'x' : h>0 ? `(x − ${h})` : `(x + ${Math.abs(h)})`;
-    const exp = type==='linear'?'':type==='quad'?'²':'³';
-    formula += hStr+exp;
-    if (a!==0) formula += a>0 ? ` + ${a}` : ` − ${Math.abs(a)}`;
+    if (Math.abs(k) < 1e-9) {
+      formula = a === 0 ? 'g(x) = 0' : `g(x) = ${a}`;
+    } else {
+      if (Math.abs(k) !== 1) formula += k < 0 ? `−${Math.abs(k)}` : `${k}`;
+      else if (k === -1) formula += '−';
+      const hStr = h === 0 ? 'x' : h > 0 ? `(x − ${h})` : `(x + ${Math.abs(h)})`;
+      const exp = type === 'linear' ? '' : type === 'quad' ? '²' : '³';
+      formula += hStr + exp;
+      if (a !== 0) formula += a > 0 ? ` + ${a}` : ` − ${Math.abs(a)}`;
+    }
     const formulaDiv = document.getElementById('formula-display');
     if (formulaDiv) {
       formulaDiv.innerHTML = `$${formula}$`;
@@ -1361,11 +1821,17 @@ function setupEventListeners() {
   });
 }
 
+function paintAllCharts() {
+  updatePlot();
+  initExamples();
+}
+
 function initCharts() {
   try {
     setupEventListeners();
-    updatePlot();
-    initExamples();
+    paintAllCharts();
+    requestAnimationFrame(() => requestAnimationFrame(paintAllCharts));
+    window.addEventListener('load', () => requestAnimationFrame(paintAllCharts), { once: true });
   } catch (e) {
     console.error('Error al inicializar gráficas:', e);
   }
