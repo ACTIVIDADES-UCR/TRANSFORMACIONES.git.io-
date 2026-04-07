@@ -19,7 +19,7 @@
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 
   <!-- Plotly para gráficas interactivas -->
-  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <script src="./plotly.min.js"></script>
 
   <style>
     :root {
@@ -789,10 +789,87 @@ function updatePlot() {
   ];
 
   const yr = type==='cubic' ? [-15,15] : [-6,15];
-  Plotly.react('main-plot', traces, plotLayout([-6,6], yr), {responsive:true, displayModeBar:false});
+  Plotly.react('main-plot', traces, plotLayout([-6,6], yr), {responsive:true, displayModeBar:true});
 }
-document.getElementById('base-fn').addEventListener('change', updatePlot);
-updatePlot();
+
+// ──────────────────────────────────────────
+// EJEMPLOS FIJOS (definir ANTES de initPlotly)
+// ──────────────────────────────────────────
+function initExamples() {
+  // Ej 1: f(x) = -2(x-2)^2 + 5
+  (function() {
+    const xs = linspace(-1, 5, 300);
+    const ys1 = xs.map(x => x*x);
+    const ys2 = xs.map(x => -2*(x-2)**2+5);
+    const x0 = [2-Math.sqrt(2.5), 2+Math.sqrt(2.5)];
+    Plotly.newPlot('ej1-plot', [
+      {x:xs, y:ys1, mode:'lines', name:'y = x²', line:{color:C_GRIS, dash:'dot', width:2}},
+      {x:xs, y:ys2, mode:'lines', name:'f(x)=−2(x−2)²+5', line:{color:C_AZUL, width:3}},
+      {x:[2], y:[5], mode:'markers', name:'Vértice (2,5)', marker:{color:C_ORO, size:12}},
+      {x:[0], y:[-3], mode:'markers', name:'Eje y (0,−3)', marker:{color:C_ROJO, size:9}},
+      {x:x0, y:[0,0], mode:'markers', name:'Eje x', marker:{color:C_VERDE, size:9}}
+    ], plotLayout([-1,5],[-6,7],'f(x) = −2(x−2)² + 5'), {responsive:true, displayModeBar:true});
+  })();
+
+  // Ej 2: g(x) = -(x-2)^3 + 1
+  (function() {
+    const xs = linspace(-0.5, 4.5, 300);
+    const ys1 = xs.map(x => x**3);
+    const ys2 = xs.map(x => -(x-2)**3+1);
+    Plotly.newPlot('ej2-plot', [
+      {x:xs, y:ys1, mode:'lines', name:'y = x³', line:{color:C_GRIS, dash:'dot', width:2}},
+      {x:xs, y:ys2, mode:'lines', name:'g(x)=−(x−2)³+1', line:{color:C_AZUL, width:3}},
+      {x:[2], y:[1], mode:'markers', name:'Inflexión (2,1)', marker:{color:C_ORO, size:12}},
+      {x:[0], y:[9], mode:'markers', name:'Eje y (0,9)', marker:{color:C_ROJO, size:9}},
+      {x:[3], y:[0], mode:'markers', name:'Eje x (3,0)', marker:{color:C_VERDE, size:9}}
+    ], plotLayout([-0.5,4.5],[-9,11],'g(x) = −(x−2)³ + 1'), {responsive:true, displayModeBar:true});
+  })();
+
+  // Ej 3: f(x) = (x-1)^2 + 2
+  (function() {
+    const xs = linspace(-2, 5, 300);
+    const ys = xs.map(x => (x-1)**2+2);
+    Plotly.newPlot('ej3-plot', [
+      {x:xs, y:ys, mode:'lines', name:'f(x)=?', line:{color:C_AZUL, width:3}},
+      {x:[1], y:[2], mode:'markers', name:'(1, 2)', marker:{color:C_ORO, size:12}}
+    ], plotLayout([-2,5],[-1,9],'¿Cuál es el criterio?'), {responsive:true, displayModeBar:true});
+  })();
+}
+
+// Listener para cambios en función base
+document.addEventListener('DOMContentLoaded', function() {
+  const baseFnElement = document.getElementById('base-fn');
+  if (baseFnElement) {
+    baseFnElement.addEventListener('change', updatePlot);
+  }
+});
+
+// Inicialización de Plotly
+function initPlotly() {
+  if (typeof Plotly !== 'undefined') {
+    try {
+      updatePlot();
+      initExamples();
+    } catch (e) {
+      console.error('Error inicializando gráficas:', e);
+      setTimeout(initPlotly, 200);
+    }
+  } else {
+    setTimeout(initPlotly, 100);
+  }
+}
+
+// Ejecutar initPlotly cuando el DOM esté listo
+function startInit() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPlotly);
+  } else {
+    initPlotly();
+  }
+}
+
+// Iniciar inmediatamente
+startInit();
 
 // ──────────────────────────────────────────
 // CALCULADORA COMPLETAR CUADRADO
@@ -879,50 +956,52 @@ function calcVertice() {
     {x:[0], y:[c], mode:'markers', name:`Eje y (0,${c})`,
      marker:{color:C_ROJO, size:9}},
     ...rootTraces
-  ], plotLayout([xCenter-xRange, xCenter+xRange], [Math.min(...ysNew)-3, Math.max(...ysNew)+3]), {responsive:true, displayModeBar:false});
+  ], plotLayout([xCenter-xRange, xCenter+xRange], [Math.min(...ysNew)-3, Math.max(...ysNew)+3]), {responsive:true, displayModeBar:true});
 }
 
 // ──────────────────────────────────────────
 // EJEMPLOS FIJOS
 // ──────────────────────────────────────────
-// Ej 1: f(x) = -2(x-2)^2 + 5
-(function() {
-  const xs = linspace(-1, 5, 300);
-  const ys1 = xs.map(x => x*x);
-  const ys2 = xs.map(x => -2*(x-2)**2+5);
-  const x0 = [2-Math.sqrt(2.5), 2+Math.sqrt(2.5)];
-  Plotly.newPlot('ej1-plot', [
-    {x:xs, y:ys1, mode:'lines', name:'y = x²', line:{color:C_GRIS, dash:'dot', width:2}},
-    {x:xs, y:ys2, mode:'lines', name:'f(x)=−2(x−2)²+5', line:{color:C_AZUL, width:3}},
-    {x:[2], y:[5], mode:'markers', name:'Vértice (2,5)', marker:{color:C_ORO, size:12}},
-    {x:[0], y:[-3], mode:'markers', name:'Eje y (0,−3)', marker:{color:C_ROJO, size:9}},
-    {x:x0, y:[0,0], mode:'markers', name:'Eje x', marker:{color:C_VERDE, size:9}}
-  ], plotLayout([-1,5],[-6,7],'f(x) = −2(x−2)² + 5'), {responsive:true, displayModeBar:false});
-})();
+function initExamples() {
+  // Ej 1: f(x) = -2(x-2)^2 + 5
+  (function() {
+    const xs = linspace(-1, 5, 300);
+    const ys1 = xs.map(x => x*x);
+    const ys2 = xs.map(x => -2*(x-2)**2+5);
+    const x0 = [2-Math.sqrt(2.5), 2+Math.sqrt(2.5)];
+    Plotly.newPlot('ej1-plot', [
+      {x:xs, y:ys1, mode:'lines', name:'y = x²', line:{color:C_GRIS, dash:'dot', width:2}},
+      {x:xs, y:ys2, mode:'lines', name:'f(x)=−2(x−2)²+5', line:{color:C_AZUL, width:3}},
+      {x:[2], y:[5], mode:'markers', name:'Vértice (2,5)', marker:{color:C_ORO, size:12}},
+      {x:[0], y:[-3], mode:'markers', name:'Eje y (0,−3)', marker:{color:C_ROJO, size:9}},
+      {x:x0, y:[0,0], mode:'markers', name:'Eje x', marker:{color:C_VERDE, size:9}}
+    ], plotLayout([-1,5],[-6,7],'f(x) = −2(x−2)² + 5'), {responsive:true, displayModeBar:true});
+  })();
 
-// Ej 2: g(x) = -(x-2)^3 + 1
-(function() {
-  const xs = linspace(-0.5, 4.5, 300);
-  const ys1 = xs.map(x => x**3);
-  const ys2 = xs.map(x => -(x-2)**3+1);
-  Plotly.newPlot('ej2-plot', [
-    {x:xs, y:ys1, mode:'lines', name:'y = x³', line:{color:C_GRIS, dash:'dot', width:2}},
-    {x:xs, y:ys2, mode:'lines', name:'g(x)=−(x−2)³+1', line:{color:C_AZUL, width:3}},
-    {x:[2], y:[1], mode:'markers', name:'Inflexión (2,1)', marker:{color:C_ORO, size:12}},
-    {x:[0], y:[9], mode:'markers', name:'Eje y (0,9)', marker:{color:C_ROJO, size:9}},
-    {x:[3], y:[0], mode:'markers', name:'Eje x (3,0)', marker:{color:C_VERDE, size:9}}
-  ], plotLayout([-0.5,4.5],[-9,11],'g(x) = −(x−2)³ + 1'), {responsive:true, displayModeBar:false});
-})();
+  // Ej 2: g(x) = -(x-2)^3 + 1
+  (function() {
+    const xs = linspace(-0.5, 4.5, 300);
+    const ys1 = xs.map(x => x**3);
+    const ys2 = xs.map(x => -(x-2)**3+1);
+    Plotly.newPlot('ej2-plot', [
+      {x:xs, y:ys1, mode:'lines', name:'y = x³', line:{color:C_GRIS, dash:'dot', width:2}},
+      {x:xs, y:ys2, mode:'lines', name:'g(x)=−(x−2)³+1', line:{color:C_AZUL, width:3}},
+      {x:[2], y:[1], mode:'markers', name:'Inflexión (2,1)', marker:{color:C_ORO, size:12}},
+      {x:[0], y:[9], mode:'markers', name:'Eje y (0,9)', marker:{color:C_ROJO, size:9}},
+      {x:[3], y:[0], mode:'markers', name:'Eje x (3,0)', marker:{color:C_VERDE, size:9}}
+    ], plotLayout([-0.5,4.5],[-9,11],'g(x) = −(x−2)³ + 1'), {responsive:true, displayModeBar:true});
+  })();
 
-// Ej 3: f(x) = (x-1)^2 + 2
-(function() {
-  const xs = linspace(-2, 5, 300);
-  const ys = xs.map(x => (x-1)**2+2);
-  Plotly.newPlot('ej3-plot', [
-    {x:xs, y:ys, mode:'lines', name:'f(x)=?', line:{color:C_AZUL, width:3}},
-    {x:[1], y:[2], mode:'markers', name:'(1, 2)', marker:{color:C_ORO, size:12}}
-  ], plotLayout([-2,5],[-1,9],'¿Cuál es el criterio?'), {responsive:true, displayModeBar:false});
-})();
+  // Ej 3: f(x) = (x-1)^2 + 2
+  (function() {
+    const xs = linspace(-2, 5, 300);
+    const ys = xs.map(x => (x-1)**2+2);
+    Plotly.newPlot('ej3-plot', [
+      {x:xs, y:ys, mode:'lines', name:'f(x)=?', line:{color:C_AZUL, width:3}},
+      {x:[1], y:[2], mode:'markers', name:'(1, 2)', marker:{color:C_ORO, size:12}}
+    ], plotLayout([-2,5],[-1,9],'¿Cuál es el criterio?'), {responsive:true, displayModeBar:true});
+  })();
+}
 
 // ──────────────────────────────────────────
 // TABS
