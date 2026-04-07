@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Graficación con Transformaciones — MA-0001</title>
+  <meta name="description" content="MA-0001 Precálculo (UCR): transformaciones de gráficas, forma vértice y práctica guiada — Semana 4." />
+  <title>MA-0001 · Graficación con transformaciones — UCR</title>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -160,6 +161,153 @@
     .card.nota  .card-title { color: #8a6614; }
     .card.verde .card-title { color: var(--verde); }
     .card.ejemplo .card-title { color: #444; }
+    .card.curso {
+      border-left: 5px solid var(--verde);
+      background: linear-gradient(135deg, #f0faf5, #e8f5ee);
+    }
+    .card.curso .card-title { color: var(--verde); }
+    .card.confusion {
+      border-left: 5px solid var(--rojo);
+      background: linear-gradient(135deg, #fff8f8, #fdeeee);
+    }
+    .card.confusion .card-title { color: #8f1818; }
+
+    .subsection-title {
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--azul);
+      margin: 28px 0 14px;
+      padding-bottom: 6px;
+      border-bottom: 1px dashed rgba(0,56,116,0.2);
+    }
+    .subsection-title:first-of-type { margin-top: 0; }
+
+    .dominio-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 8px; }
+    .dominio-table th, .dominio-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(0,56,116,0.1);
+      text-align: left;
+    }
+    .dominio-table th { background: rgba(0,56,116,0.08); color: var(--azul); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .dominio-table tr:nth-child(even) td { background: rgba(0,56,116,0.03); }
+
+    .quiz-check {
+      margin: 16px 0;
+      border: 1px solid rgba(0,56,116,0.15);
+      border-radius: 10px;
+      background: #fff;
+      overflow: hidden;
+    }
+    .quiz-check summary {
+      cursor: pointer;
+      padding: 12px 16px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--azul);
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .quiz-check summary::-webkit-details-marker { display: none; }
+    .quiz-check summary::before {
+      content: '▸';
+      color: var(--oro);
+      font-size: 0.85rem;
+      transition: transform 0.2s;
+    }
+    .quiz-check[open] summary::before { transform: rotate(90deg); }
+    .quiz-check .quiz-ans {
+      padding: 0 16px 14px 36px;
+      font-size: 0.9rem;
+      color: var(--text);
+      border-top: 1px solid rgba(0,56,116,0.08);
+      padding-top: 12px;
+    }
+
+    .explore-tip {
+      background: linear-gradient(135deg, #edf2fb, #e8f0fa);
+      border: 1px solid rgba(0,56,116,0.12);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 20px;
+      font-size: 0.92rem;
+    }
+    .explore-tip strong { color: var(--azul); }
+    .explore-tip ol { margin: 10px 0 0 1.1rem; line-height: 1.85; }
+
+    .color-key {
+      display: flex; flex-wrap: wrap; gap: 10px 18px;
+      margin-top: 12px; font-size: 0.82rem;
+    }
+    .color-key span { display: inline-flex; align-items: center; gap: 6px; }
+    .color-key i {
+      display: inline-block; width: 12px; height: 12px; border-radius: 3px;
+    }
+
+    .algo-steps {
+      counter-reset: alg;
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0;
+    }
+    .algo-steps li {
+      position: relative;
+      padding-left: 42px;
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+      line-height: 1.65;
+    }
+    .algo-steps li::before {
+      counter-increment: alg;
+      content: counter(alg);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--verde);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .level-pill {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 8px;
+      border-radius: 8px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .level-pill.n1 { background: rgba(0,100,60,0.15); color: var(--verde); }
+    .level-pill.n2 { background: rgba(200,155,40,0.2); color: #7a5a0a; }
+
+    .checklist-mini {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0 0;
+    }
+    .checklist-mini li {
+      padding: 6px 0 6px 28px;
+      position: relative;
+      font-size: 0.92rem;
+    }
+    .checklist-mini li::before {
+      content: '☐';
+      position: absolute;
+      left: 0;
+      color: var(--azul);
+      font-size: 1rem;
+    }
 
     /* ── TABLA TRANSFORMACIONES ── */
     .trans-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
@@ -316,6 +464,7 @@
     <span>MA-0001</span> Precálculo — UCR
   </div>
   <ul class="nav-links">
+    <li><a href="#guia">Guía</a></li>
     <li><a href="#intro">Tipos</a></li>
     <li><a href="#interactivo">Interactivo</a></li>
     <li><a href="#vertice">Vértice</a></li>
@@ -326,15 +475,19 @@
 
 <!-- ═══════ HERO ═══════ -->
 <div class="hero">
-  <div class="hero-badge">MA-0001 · Semana 4</div>
+  <div class="hero-badge">MA-0001 Precálculo · UCR · Semana 4</div>
   <h1>Graficación con<br>Transformaciones</h1>
-  <p>Aprende a graficar funciones polinomiales identificando la función base y aplicando traslaciones, reflexiones y elongaciones de forma sistemática.</p>
+  <p>Material de apoyo para el curso <strong>MA-0001</strong> (Escuela de Matemática, Universidad de Costa Rica): partir de una función base, aplicar transformaciones con criterio y leer vértice o inflexión desde el criterio o la gráfica.</p>
   <div class="hero-rule"></div>
 </div>
 
 <!-- ═══════ ÍNDICE ═══════ -->
 <div class="container">
   <div class="index-grid">
+    <a class="index-card" href="#guia">
+      <div class="index-num">★</div>
+      <div class="index-label">Guía de estudio (MA-0001)</div>
+    </a>
     <a class="index-card" href="#intro">
       <div class="index-num">1</div>
       <div class="index-label">Tipos de Transformaciones</div>
@@ -359,6 +512,97 @@
 </div>
 
 <!-- ═══════════════════════════════════════════
+     GUÍA DE ESTUDIO — MA-0001
+════════════════════════════════════════════ -->
+<div class="container">
+  <div class="section" id="guia" style="padding-top:40px;">
+    <div class="section-header">
+      <div class="accent"></div>
+      <h2>Guía de estudio · MA-0001</h2>
+    </div>
+
+    <div class="card curso">
+      <div class="card-title">Cómo usar este recurso (Semana 4)</div>
+      <p>Este sitio acompaña el tema de <strong>graficación por transformaciones</strong> visto en <strong>MA-0001 Precálculo</strong>. Está pensado para que repase <em>en este orden</em>: (1) tipos de transformación y orden recomendado, (2) explorador para “sentir” el efecto de $h$, $a$ y $k$, (3) pasar de $ax^2+bx+c$ a forma vértice, (4) ejemplos tipo evaluación y (5) práctica con pistas.</p>
+      <p style="margin-top:10px;font-size:0.9rem;color:var(--gris);">La notación coincide con la del curso: traslaciones, reflexiones y elongación/compresión vertical respecto a una función base $f$.</p>
+    </div>
+
+    <h3 class="subsection-title">Hilo de trabajo (siempre el mismo)</h3>
+    <div class="card def">
+      <ol style="padding-left:1.2rem;line-height:1.9;font-size:0.95rem;">
+        <li><strong>Identificar la función base</strong> ($x$, $x^2$, $x^3$, …).</li>
+        <li><strong>Leer el efecto de los parámetros</strong> en el criterio $g(x)=k\cdot f(x-h)+a$: primero lo que ocurre <em>dentro</em> del paréntesis ($h$), luego escalas/reflexiones ($k$), luego lo que suma al final ($a$).</li>
+        <li><strong>Aplicar el orden recomendado</strong> al describir transformaciones (horizontal → reflexión/escala vertical → vertical).</li>
+        <li><strong>Completar datos</strong>: vértice o inflexión, dominio, ámbito, cortes con ejes si aplica.</li>
+      </ol>
+    </div>
+
+    <h3 class="subsection-title">Dominio y ámbito de las bases (referencia rápida)</h3>
+    <div class="card">
+      <table class="dominio-table">
+        <thead>
+          <tr>
+            <th>Base</th>
+            <th>Dominio</th>
+            <th>Ámbito</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>$f(x)=x$</td>
+            <td>$\mathbb{R}$</td>
+            <td>$\mathbb{R}$</td>
+          </tr>
+          <tr>
+            <td>$f(x)=x^2$</td>
+            <td>$\mathbb{R}$</td>
+            <td>$[0,\infty)$</td>
+          </tr>
+          <tr>
+            <td>$f(x)=x^3$</td>
+            <td>$\mathbb{R}$</td>
+            <td>$\mathbb{R}$</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px;font-size:0.88rem;color:var(--gris);">Las traslaciones y escalas verticales que usamos en MA-0001 no restringen el dominio de estos polinomios; el ámbito sí cambia según vértice y apertura (cuadráticas) o comportamiento global (cúbicas).</p>
+    </div>
+
+    <h3 class="subsection-title">Intersecciones con los ejes (checklist)</h3>
+    <div class="card verde">
+      <ul class="checklist-mini">
+        <li><strong>Eje $y$:</strong> evaluar $f(0)$ (sustituir $x=0$).</li>
+        <li><strong>Eje $x$:</strong> resolver $f(x)=0$. En cuadráticas, discriminar según signo de $a$ y posición del vértice para anticipar si hay 0, 1 o 2 cortes.</li>
+      </ul>
+    </div>
+
+    <h3 class="subsection-title">Confusiones frecuentes</h3>
+    <div class="card confusion">
+      <div class="card-title">Traslación horizontal</div>
+      <p>El criterio $f(x-h)$ desplaza la gráfica <strong>$h$ unidades hacia la derecha</strong> si $h>0$. No confundir con “el signo del número dentro del paréntesis”: escribir $f(x-3)$ implica corrimiento a la <em>derecha</em> 3 unidades respecto a $f(x)$.</p>
+    </div>
+    <div class="card confusion">
+      <div class="card-title">Escala vertical vs traslación vertical</div>
+      <p>$k\cdot f(x)$ <strong>estira o comprime</strong> respecto al eje $x$; <strong>no mueve</strong> el vértice por sí solo. La traslación vertical es la suma final: $\ldots + a$.</p>
+    </div>
+
+    <h3 class="subsection-title">Autocomprobación</h3>
+    <details class="quiz-check">
+      <summary>Si la gráfica de $y=x^2$ se mueve 2 unidades a la <em>derecha</em>, ¿el criterio lleva $(x-2)^2$ o $(x+2)^2$?</summary>
+      <div class="quiz-ans">
+        Lleva <strong>$(x-2)^2$</strong>. Sustituya $x=2$: debe anularse el término cuadrado en el vértice; $(x-2)^2$ se hace cero en $x=2$, coherente con la traslación a la derecha.
+      </div>
+    </details>
+    <details class="quiz-check">
+      <summary>¿Las transformaciones “conmutan” en cualquier orden al describirlas?</summary>
+      <div class="quiz-ans">
+        Para <strong>describir</strong> el efecto en la gráfica conviene seguir el <strong>orden recomendado en el curso</strong> (horizontal → reflexión/escala vertical → vertical). Eso mantiene el relato alineado con los ejemplos y la rúbrica de MA-0001.
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
      SECCIÓN 1 — TIPOS DE TRANSFORMACIONES
 ════════════════════════════════════════════ -->
 <div class="container">
@@ -371,6 +615,7 @@
     <div class="card def">
       <div class="card-title">Regla general</div>
       <p>Partimos siempre de una <strong>función base</strong> $f(x)=x^n$ y aplicamos transformaciones para obtener nuevas funciones. Para evaluación, cada criterio tendrá <strong>máximo 3 transformaciones</strong>.</p>
+      <p style="margin-top:10px;font-size:0.9rem;color:var(--gris);">Si repasa primero la <a href="#guia" style="color:var(--azul);font-weight:600;">Guía de estudio MA-0001</a>, conectará más rápido la tabla con el explorador interactivo.</p>
     </div>
 
     <div class="card">
@@ -434,7 +679,22 @@
       <h2>2. Explorador Interactivo</h2>
     </div>
 
-    <p style="margin-bottom:20px;color:var(--gris);">Ajusta los parámetros y observa cómo cambia la gráfica en tiempo real.</p>
+    <p style="margin-bottom:14px;color:var(--gris);">Use los controles para relacionar el <strong>criterio</strong> con el <strong>movimiento</strong> de la gráfica. La curva gris punteada es la base $f$; la azul es $g$.</p>
+
+    <div class="explore-tip">
+      <strong>Laboratorio guiado (5 minutos)</strong>
+      <ol>
+        <li>Fije $a=0$, $k=1$ y mueva solo <strong>$h$</strong>: observe cómo se mueve el “punto de referencia” sin cambiar forma ni abertura.</li>
+        <li>Regrese $h=0$ y mueva solo <strong>$a$</strong>: traslación vertical pura.</li>
+        <li>Con $h=0$, $a=0$, cambie <strong>$k$</strong> (incluya valores negativos): reflexión y escala vertical.</li>
+        <li>Cambie la <strong>función base</strong> y repita: compare parábola vs cúbica.</li>
+      </ol>
+      <div class="color-key">
+        <span><i style="background:var(--azul)"></i> Traslaciones / reflexiones (tabla §1)</span>
+        <span><i style="background:var(--oro)"></i> Escala vertical $k$</span>
+        <span><i style="background:var(--rojo)"></i> Reflexión con eje $x$ o $y$</span>
+      </div>
+    </div>
 
     <div class="control-panel">
       <h3>🎛️ Parámetros de la función $g(x) = k \cdot f(x - h) + a$</h3>
@@ -491,6 +751,24 @@
       <p style="margin-top:10px;">El vértice $(h, k)$ determina las traslaciones desde $y=x^2$.</p>
     </div>
 
+    <h3 class="subsection-title">Procedimiento: completar el cuadrado (lo que se espera en MA-0001)</h3>
+    <div class="card def">
+      <ol class="algo-steps">
+        <li><strong>Organizar:</strong> escribir $f(x)=ax^2+bx+c$ con $a\neq 0$.</li>
+        <li><strong>Factorizar $a$</strong> solo de los términos que llevan $x$: $f(x)=a\left(x^2+\frac{b}{a}x\right)+c$.</li>
+        <li><strong>Completar</strong> dentro del paréntesis: sumar y restar $\left(\frac{b}{2a}\right)^2$ para formar un binomio al cuadrado.</li>
+        <li><strong>Reescribir</strong> el trinomio como $\left(x+\frac{b}{2a}\right)^2$ y distribuir $a$; simplificar números sueltos hasta llegar a $a(x-h)^2+k$.</li>
+        <li><strong>Interpretar:</strong> leer $(h,k)$, indicar transformaciones desde $y=x^2$ y (si se pide) intersecciones con los ejes.</li>
+      </ol>
+    </div>
+
+    <div class="card nota">
+      <div class="card-title">Ejemplo mínimo (antes → después)</div>
+      <p style="font-size:0.95rem;">Partiendo de $x^2+6x+1$: se completa $(x+3)^2$ porque $\left(\frac{6}{2}\right)^2=9$, entonces</p>
+      <p style="margin-top:8px;text-align:center;">$x^2+6x+1 = (x+3)^2 - 9 + 1 = (x+3)^2 - 8$.</p>
+      <p style="margin-top:10px;font-size:0.88rem;color:var(--gris);">Vértice $(-3,-8)$. En ejercicios con $a\neq 1$, el paso 2 (factorizar $a$) va antes de completar dentro del paréntesis.</p>
+    </div>
+
     <!-- Calculadora de completar cuadrado -->
     <div class="control-panel">
       <h3>🧮 Calculadora: completar el cuadrado</h3>
@@ -536,6 +814,8 @@
       <div class="accent"></div>
       <h2>4. Ejemplos Resueltos</h2>
     </div>
+
+    <p style="margin-bottom:18px;color:var(--gris);font-size:0.95rem;">Tres modelos alineados con el estilo de MA-0001: forma vértice, lista ordenada de transformaciones y lectura de datos desde la gráfica. Compare con sus notas de curso y con la <a href="#guia" style="color:var(--azul);font-weight:600;">guía de estudio</a>.</p>
 
     <div class="tabs">
       <button class="tab-btn active" onclick="openTab('ej1',this)">Ej. Cuadrática</button>
@@ -659,50 +939,56 @@
     </div>
 
     <div class="card nota" style="margin-bottom:20px;">
-      <div class="card-title">Instrucciones</div>
-      Para cada función: (i) identifique la función base, (ii) liste las transformaciones <strong>en orden</strong>, (iii) determine dominio, ámbito e intersecciones con los ejes, (iv) grafique. Haga clic en <em>Ver pista</em> si necesita ayuda.
+      <div class="card-title">Instrucciones (criterio tipo MA-0001)</div>
+      <p>Para cada función: <strong>(i)</strong> función base, <strong>(ii)</strong> lista de transformaciones <strong>en el orden del curso</strong> (horizontal → reflexión/escala vertical → vertical), <strong>(iii)</strong> dominio, ámbito y cortes con los ejes, <strong>(iv)</strong> boceto o análisis cualitativo de la gráfica.</p>
+      <p style="margin-top:10px;font-size:0.88rem;color:var(--gris);"><span class="level-pill n1">Nivel 1</span> manipulación directa del criterio. <span class="level-pill n2">Nivel 2</span> requiere completar el cuadrado o construir desde datos.</p>
     </div>
 
     <div class="practica-item">
-      <div class="q-label">Ejercicio 1</div>
+      <div class="q-label"><span class="level-pill n1">Nivel 1</span> Ejercicio 1</div>
       <div class="q-text">$f(x) = (x-2)^2 - 5$</div>
       <button class="hint-btn" onclick="toggleHint(this)">Ver pista</button>
       <div class="hint-text">Base: $x^2$. Traslación horizontal derecha 2, luego traslación vertical abajo 5. Vértice en $(2,-5)$. Ámbito: $[-5,+\infty)$.</div>
     </div>
 
     <div class="practica-item">
-      <div class="q-label">Ejercicio 2</div>
+      <div class="q-label"><span class="level-pill n1">Nivel 1</span> Ejercicio 2</div>
       <div class="q-text">$g(x) = -(x+1)^2 + 3$</div>
       <button class="hint-btn" onclick="toggleHint(this)">Ver pista</button>
       <div class="hint-text">Base: $x^2$. Traslación horizontal izquierda 1, reflexión eje $x$, traslación vertical arriba 3. Vértice en $(-1,3)$. Ámbito: $(-\infty, 3]$.</div>
     </div>
 
     <div class="practica-item">
-      <div class="q-label">Ejercicio 3</div>
+      <div class="q-label"><span class="level-pill n1">Nivel 1</span> Ejercicio 3</div>
       <div class="q-text">$h(x) = 2(x-1)^2 + 3$ &emsp; <span style="color:var(--rojo);font-size:0.85rem;">[¿Tiene intersección con eje $x$?]</span></div>
       <button class="hint-btn" onclick="toggleHint(this)">Ver pista</button>
       <div class="hint-text">El vértice es $(1,3)$ y $k=2>0$, por lo que la parábola abre hacia arriba con mínimo en $y=3>0$. No tiene intersección con el eje $x$.</div>
     </div>
 
     <div class="practica-item">
-      <div class="q-label">Ejercicio 4</div>
+      <div class="q-label"><span class="level-pill n1">Nivel 1</span> Ejercicio 4</div>
       <div class="q-text">$r(x) = (x+1)^3 - 4$</div>
       <button class="hint-btn" onclick="toggleHint(this)">Ver pista</button>
       <div class="hint-text">Base: $x^3$. Traslación horizontal izquierda 1, traslación vertical abajo 4. Inflexión en $(-1,-4)$. Eje $x$: $(x+1)^3=4 \Rightarrow x=\sqrt[3]{4}-1$.</div>
     </div>
 
     <div class="practica-item">
-      <div class="q-label">Ejercicio 5 — Completar el cuadrado</div>
+      <div class="q-label"><span class="level-pill n2">Nivel 2</span> Ejercicio 5 — Completar el cuadrado</div>
       <div class="q-text">$p(x) = -3x^2 - 6x + 2$ &emsp; Escríbalo en forma vértice $a(x-h)^2+k$.</div>
       <button class="hint-btn" onclick="toggleHint(this)">Ver pista</button>
       <div class="hint-text">Extraer: $-3(x^2+2x)+2$. Completar: $-3(x^2+2x+1-1)+2 = -3(x+1)^2+3+2 = -3(x+1)^2+5$. Vértice: $(-1,5)$.</div>
     </div>
 
     <div class="practica-item">
-      <div class="q-label">Ejercicio 6 — Desde la descripción</div>
+      <div class="q-label"><span class="level-pill n2">Nivel 2</span> Ejercicio 6 — Desde la descripción</div>
       <div class="q-text">Parábola con vértice en $(-1,\;4)$, que abre hacia abajo, con coeficiente líder $-2$. Escriba el criterio y determine las intersecciones con los ejes.</div>
       <button class="hint-btn" onclick="toggleHint(this)">Ver pista</button>
       <div class="hint-text">Criterio: $f(x)=-2(x+1)^2+4$. Eje $y$: $f(0)=-2+4=2$. Eje $x$: $(x+1)^2=2 \Rightarrow x=-1\pm\sqrt{2}$.</div>
+    </div>
+
+    <div class="card curso" style="margin-top:24px;">
+      <div class="card-title">Autoevaluación breve</div>
+      <p style="font-size:0.92rem;">Sin entregar: ¿puede explicar en voz alta por qué el vértice de $a(x-h)^2+k$ está en $(h,k)$? ¿Puede obtener $f(0)$ y los ceros de una cuadrática en forma vértice sin memorizar fórmulas largas? Si algo falla, vuelva al <a href="#interactivo" style="color:var(--azul);font-weight:600;">explorador</a> o a los <a href="#guia" style="color:var(--azul);font-weight:600;">apartados iniciales</a>.</p>
     </div>
 
   </div><!-- /.section -->
@@ -776,7 +1062,13 @@ function renderPlot(containerId, traces, xrange, yrange, title) {
   const ctx = canvas.getContext('2d');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-  const M = { l: 52, r: 108, t: title ? 36 : 28, b: 44 };
+  const compact = W < 480;
+  const M = {
+    l: compact ? 42 : 52,
+    r: compact ? 92 : 108,
+    t: title ? (compact ? 32 : 36) : (compact ? 26 : 28),
+    b: compact ? 40 : 44
+  };
   const plotL = M.l, plotT = M.t, plotW = W - M.l - M.r, plotH = H - M.t - M.b;
 
   const xMin = xrange[0], xMax = xrange[1];
@@ -883,7 +1175,7 @@ function renderPlot(containerId, traces, xrange, yrange, title) {
   }
 
   ctx.fillStyle = '#5a6e89';
-  ctx.font = '11px Inter, sans-serif';
+  ctx.font = compact ? '10px Inter, sans-serif' : '11px Inter, sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText('x', W / 2, H - 10);
   ctx.save();
@@ -892,7 +1184,9 @@ function renderPlot(containerId, traces, xrange, yrange, title) {
   ctx.fillText('y', 0, 0);
   ctx.restore();
 
+  const tickFs = compact ? 9 : 11;
   ctx.fillStyle = '#0d1a2e';
+  ctx.font = `${tickFs}px Inter, sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
   xTicks.forEach((tx) => {
@@ -910,21 +1204,24 @@ function renderPlot(containerId, traces, xrange, yrange, title) {
 
   let ly = M.t + 8;
   const legend = traces.filter((t) => t.name);
-  ctx.font = '10px Inter, sans-serif';
+  const legFs = compact ? 8.5 : 10;
+  const legStep = compact ? 14 : 16;
+  ctx.font = `${legFs}px Inter, sans-serif`;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
   legend.forEach((tr) => {
     const col = tr.marker?.color || tr.line?.color || C_AZUL;
     ctx.fillStyle = 'rgba(255,255,255,0.92)';
     const tw = Math.min(ctx.measureText(tr.name).width + 18, M.r - 8);
-    ctx.fillRect(W - M.r + 4, ly - 6, tw, 14);
+    const rowH = compact ? 13 : 14;
+    ctx.fillRect(W - M.r + 4, ly - 6, tw, rowH);
     ctx.strokeStyle = 'rgba(0,56,116,0.15)';
-    ctx.strokeRect(W - M.r + 4, ly - 6, tw, 14);
+    ctx.strokeRect(W - M.r + 4, ly - 6, tw, rowH);
     ctx.fillStyle = col;
-    ctx.fillRect(W - M.r + 8, ly - 3, 10, 6);
+    ctx.fillRect(W - M.r + 8, ly - 3, compact ? 8 : 10, compact ? 5 : 6);
     ctx.fillStyle = C_AZUL;
-    ctx.fillText(tr.name, W - M.r + 22, ly);
-    ly += 16;
+    ctx.fillText(tr.name, W - M.r + (compact ? 20 : 22), ly);
+    ly += legStep;
   });
 
   const redraw = () => renderPlot(containerId, traces, xrange, yrange, title);
