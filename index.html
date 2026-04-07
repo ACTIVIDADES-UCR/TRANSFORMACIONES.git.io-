@@ -713,6 +713,15 @@
     }
 
     /* Alturas gráficos Canvas (JS usa el rect del contenedor) */
+    #main-plot,
+    #vertice-plot,
+    #ej1-plot,
+    #ej2-plot,
+    #ej3-plot {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
     #main-plot { height: 380px; }
     #vertice-plot, #ej1-plot, #ej2-plot { height: 340px; }
     #ej3-plot { height: 320px; }
@@ -777,9 +786,10 @@
       .mapa-table, .dominio-table, .trans-table {
         min-width: 520px;
       }
-      #main-plot { height: min(300px, 58vh); }
-      #vertice-plot, #ej1-plot, #ej2-plot { height: min(280px, 52vh); }
-      #ej3-plot { height: min(260px, 48vh); }
+      /* Alturas fijas: evita saltos con la barra de Safari y mantiene proporción usable */
+      #main-plot { height: 280px; min-height: 260px; }
+      #vertice-plot, #ej1-plot, #ej2-plot { height: 260px; min-height: 240px; }
+      #ej3-plot { height: 240px; min-height: 220px; }
       footer { font-size: 0.76rem; padding: 10px 1rem calc(10px + env(safe-area-inset-bottom, 0px)); }
       body {
         padding-bottom: calc(8.25rem + env(safe-area-inset-bottom, 0px));
@@ -1695,22 +1705,26 @@ function _ticks(min, max, count) {
 
 /** Tamaño real del contenedor (evita canvas vacío antes del layout o en pestañas ocultas). */
 function plotBoxSize(el) {
-  let w = el.clientWidth || el.offsetWidth;
-  let h = el.clientHeight || el.offsetHeight;
   const r = el.getBoundingClientRect();
-  if (w < 8) w = r.width || 0;
-  if (h < 8) h = r.height || 0;
+  let w = Math.round(r.width);
+  let h = Math.round(r.height);
+  if (w < 4) w = el.clientWidth || el.offsetWidth || 0;
+  if (h < 4) h = el.clientHeight || el.offsetHeight || 0;
+  if (w < 4 && el.parentElement) {
+    const pr = el.parentElement.getBoundingClientRect();
+    w = Math.round(pr.width) || el.parentElement.clientWidth || 0;
+  }
   const st = el.getAttribute('style') || '';
   const mh = st.match(/height\s*:\s*(\d+)\s*px/i);
-  if (h < 8 && mh) h = parseInt(mh[1], 10);
+  if (h < 4 && mh) h = parseInt(mh[1], 10);
   const mw = st.match(/width\s*:\s*(\d+)\s*px/i);
-  if (w < 8 && mw) w = parseInt(mw[1], 10);
-  if (w < 8 && el.parentElement) {
-    const pw = el.parentElement.clientWidth || el.parentElement.offsetWidth;
-    if (pw > 8) w = pw;
+  if (w < 4 && mw) w = parseInt(mw[1], 10);
+  if (h < 4) {
+    const guess = Math.min(window.innerHeight || 600, 900) * 0.38;
+    h = Math.round(Math.max(guess, 220));
   }
-  w = Math.max(w || 320, 200);
-  h = Math.max(h || 320, 200);
+  w = Math.max(w || 280, 160);
+  h = Math.max(h || 280, 160);
   return { w, h };
 }
 
@@ -1728,7 +1742,7 @@ function renderPlot(containerId, traces, xrange, yrange, title) {
     parent.appendChild(canvas);
   }
 
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const dpr = Math.min(window.devicePixelRatio || 1, 3);
   const { w: W, h: H } = plotBoxSize(parent);
   canvas.width = Math.floor(W * dpr);
   canvas.height = Math.floor(H * dpr);
@@ -1738,12 +1752,16 @@ function renderPlot(containerId, traces, xrange, yrange, title) {
   const ctx = canvas.getContext('2d');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+  const legend = traces.filter((t) => t.name);
+  const legendBelow = W < 560 && legend.length > 0;
+  const legRows = legendBelow ? Math.ceil(legend.length / 2) : 0;
   const compact = W < 480;
+  const legStep = compact ? 15 : 17;
   const M = {
-    l: compact ? 42 : 52,
-    r: compact ? 92 : 108,
+    l: compact ? 36 : 52,
+    r: legendBelow ? 14 : (compact ? 92 : 108),
     t: title ? (compact ? 32 : 36) : (compact ? 26 : 28),
-    b: compact ? 40 : 44
+    b: legendBelow ? (50 + legRows * legStep + 14) : (compact ? 40 : 44)
   };
   const plotL = M.l, plotT = M.t, plotW = W - M.l - M.r, plotH = H - M.t - M.b;
 
@@ -1853,14 +1871,14 @@ function renderPlot(containerId, traces, xrange, yrange, title) {
   ctx.fillStyle = '#5a6e89';
   ctx.font = compact ? '10px Inter, sans-serif' : '11px Inter, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('x', W / 2, H - 10);
+  if (!legendBelow) ctx.fillText('x', W / 2, H - 10);
   ctx.save();
   ctx.translate(14, plotT + plotH / 2);
   ctx.rotate(-Math.PI / 2);
   ctx.fillText('y', 0, 0);
   ctx.restore();
 
-  const tickFs = compact ? 9 : 11;
+  const tickFs = compact ? 10 : 11;
   ctx.fillStyle = '#0d1a2e';
   ctx.font = `${tickFs}px Inter, sans-serif`;
   ctx.textAlign = 'center';
@@ -1879,26 +1897,52 @@ function renderPlot(containerId, traces, xrange, yrange, title) {
   });
 
   let ly = M.t + 8;
-  const legend = traces.filter((t) => t.name);
-  const legFs = compact ? 8.5 : 10;
-  const legStep = compact ? 14 : 16;
+  const legFs = compact ? 9 : 10;
   ctx.font = `${legFs}px Inter, sans-serif`;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  legend.forEach((tr) => {
+  const legLabel = (s) => {
+    if (!legendBelow) return s;
+    const max = W < 400 ? 26 : 34;
+    return s.length > max ? s.slice(0, max - 1) + '…' : s;
+  };
+  legend.forEach((tr, idx) => {
     const col = tr.marker?.color || tr.line?.color || C_AZUL;
+    const label = legLabel(tr.name);
     ctx.fillStyle = 'rgba(255,255,255,0.92)';
-    const tw = Math.min(ctx.measureText(tr.name).width + 18, M.r - 8);
-    const rowH = compact ? 13 : 14;
-    ctx.fillRect(W - M.r + 4, ly - 6, tw, rowH);
-    ctx.strokeStyle = 'rgba(0,56,116,0.15)';
-    ctx.strokeRect(W - M.r + 4, ly - 6, tw, rowH);
-    ctx.fillStyle = col;
-    ctx.fillRect(W - M.r + 8, ly - 3, compact ? 8 : 10, compact ? 5 : 6);
-    ctx.fillStyle = C_AZUL;
-    ctx.fillText(tr.name, W - M.r + (compact ? 20 : 22), ly);
-    ly += legStep;
+    const rowH = compact ? 14 : 15;
+    if (legendBelow) {
+      const col2 = idx % 2;
+      const row = Math.floor(idx / 2);
+      const lx = plotL + 2 + col2 * (plotW / 2);
+      const ly2 = plotT + plotH + 24 + row * legStep;
+      const tw = Math.min(ctx.measureText(label).width + 18, plotW / 2 - 6);
+      ctx.fillRect(lx, ly2 - 6, tw, rowH);
+      ctx.strokeStyle = 'rgba(0,56,116,0.15)';
+      ctx.strokeRect(lx, ly2 - 6, tw, rowH);
+      ctx.fillStyle = col;
+      ctx.fillRect(lx + 4, ly2 - 3, compact ? 8 : 10, compact ? 5 : 6);
+      ctx.fillStyle = C_AZUL;
+      ctx.fillText(label, lx + (compact ? 16 : 18), ly2);
+    } else {
+      const tw = Math.min(ctx.measureText(label).width + 18, M.r - 8);
+      ctx.fillRect(W - M.r + 4, ly - 6, tw, rowH);
+      ctx.strokeStyle = 'rgba(0,56,116,0.15)';
+      ctx.strokeRect(W - M.r + 4, ly - 6, tw, rowH);
+      ctx.fillStyle = col;
+      ctx.fillRect(W - M.r + 8, ly - 3, compact ? 8 : 10, compact ? 5 : 6);
+      ctx.fillStyle = C_AZUL;
+      ctx.fillText(label, W - M.r + (compact ? 20 : 22), ly);
+      ly += legStep;
+    }
   });
+  if (legendBelow) {
+    ctx.fillStyle = '#5a6e89';
+    ctx.font = compact ? '10px Inter, sans-serif' : '11px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('x', W / 2, H - 8);
+  }
 
   const redraw = () => renderPlot(containerId, traces, xrange, yrange, title);
   if (!parent._maObs) {
@@ -2052,6 +2096,18 @@ function initCharts() {
     paintAllCharts();
     requestAnimationFrame(() => requestAnimationFrame(paintAllCharts));
     window.addEventListener('load', () => requestAnimationFrame(paintAllCharts), { once: true });
+    let resizeT = null;
+    const scheduleRepaint = () => {
+      if (resizeT) clearTimeout(resizeT);
+      resizeT = setTimeout(() => {
+        resizeT = null;
+        paintAllCharts();
+      }, 100);
+    };
+    window.addEventListener('orientationchange', scheduleRepaint);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', scheduleRepaint);
+    }
   } catch (e) {
     console.error('Error al inicializar gráficas:', e);
   }
