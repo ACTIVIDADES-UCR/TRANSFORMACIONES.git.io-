@@ -756,40 +756,57 @@ function fnBase(type, x) {
 // EXPLORADOR INTERACTIVO
 // ──────────────────────────────────────────
 function updatePlot() {
-  const type = document.getElementById('base-fn').value;
-  const h = +document.getElementById('h-val').value;
-  const a = +document.getElementById('a-val').value;
-  const k = +document.getElementById('k-val').value;
+  try {
+    const type = document.getElementById('base-fn')?.value || 'quad';
+    const h = parseFloat(document.getElementById('h-val')?.value || 0);
+    const a = parseFloat(document.getElementById('a-val')?.value || 0);
+    const k = parseFloat(document.getElementById('k-val')?.value || 1);
 
-  document.getElementById('h-display').textContent = `h = ${h}`;
-  document.getElementById('a-display').textContent = `a = ${a}`;
-  document.getElementById('k-display').textContent = `k = ${k}`;
+    // Actualizar displays
+    const hDisplay = document.getElementById('h-display');
+    const aDisplay = document.getElementById('a-display');
+    const kDisplay = document.getElementById('k-display');
+    if (hDisplay) hDisplay.textContent = `h = ${h}`;
+    if (aDisplay) aDisplay.textContent = `a = ${a}`;
+    if (kDisplay) kDisplay.textContent = `k = ${k}`;
 
-  // Fórmula legible
-  const baseLabel = type==='linear'?'x': type==='quad'?'x²':'x³';
-  let formula = 'g(x) = ';
-  if (Math.abs(k)!==1) formula += k < 0 ? `−${Math.abs(k)}` : `${k}`;
-  else if (k===-1) formula += '−';
-  const hStr = h===0 ? 'x' : h>0 ? `(x − ${h})` : `(x + ${Math.abs(h)})`;
-  const exp = type==='linear'?'':type==='quad'?'²':'³';
-  formula += hStr+exp;
-  if (a!==0) formula += a>0 ? ` + ${a}` : ` − ${Math.abs(a)}`;
-  document.getElementById('formula-display').innerHTML = `$${formula}$`;
-  if(window.MathJax) MathJax.typesetPromise([document.getElementById('formula-display')]);
+    // Fórmula
+    const baseLabel = type==='linear'?'x': type==='quad'?'x²':'x³';
+    let formula = 'g(x) = ';
+    if (Math.abs(k)!==1) formula += k < 0 ? `−${Math.abs(k)}` : `${k}`;
+    else if (k===-1) formula += '−';
+    const hStr = h===0 ? 'x' : h>0 ? `(x − ${h})` : `(x + ${Math.abs(h)})`;
+    const exp = type==='linear'?'':type==='quad'?'²':'³';
+    formula += hStr+exp;
+    if (a!==0) formula += a>0 ? ` + ${a}` : ` − ${Math.abs(a)}`;
+    const formulaDiv = document.getElementById('formula-display');
+    if (formulaDiv) {
+      formulaDiv.innerHTML = `$${formula}$`;
+      if(window.MathJax) MathJax.typesetPromise([formulaDiv]);
+    }
 
-  const xs = linspace(-8, 8, 400);
-  const ysBase = xs.map(x => fnBase(type, x));
-  const ysNew  = xs.map(x => k * fnBase(type, x-h) + a);
+    // Generar datos
+    const xs = linspace(-8, 8, 400);
+    const ysBase = xs.map(x => fnBase(type, x));
+    const ysNew = xs.map(x => k * fnBase(type, x-h) + a);
 
-  const traces = [
-    { x: xs, y: ysBase, mode:'lines', name:`f(x) = ${baseLabel}`,
-      line:{color:C_GRIS, dash:'dot', width:2} },
-    { x: xs, y: ysNew,  mode:'lines', name:'g(x)',
-      line:{color:C_AZUL, width:3} }
-  ];
+    const traces = [
+      { x: xs, y: ysBase, mode:'lines', name:`f(x) = ${baseLabel}`,
+        line:{color:C_GRIS, dash:'dot', width:2} },
+      { x: xs, y: ysNew,  mode:'lines', name:'g(x)',
+        line:{color:C_AZUL, width:3} }
+    ];
 
-  const yr = type==='cubic' ? [-15,15] : [-6,15];
-  Plotly.react('main-plot', traces, plotLayout([-6,6], yr), {responsive:true, displayModeBar:true});
+    const yr = type==='cubic' ? [-15,15] : [-6,15];
+    const layout = plotLayout([-6,6], yr);
+
+    // Renderizar
+    if (typeof Plotly !== 'undefined') {
+      Plotly.newPlot('main-plot', traces, layout, {responsive:true, displayModeBar:true});
+    }
+  } catch (e) {
+    console.error('Error en updatePlot:', e);
+  }
 }
 
 // ──────────────────────────────────────────
@@ -846,29 +863,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Inicialización de Plotly
 function initPlotly() {
-  if (typeof Plotly !== 'undefined') {
-    try {
-      updatePlot();
-      initExamples();
-    } catch (e) {
-      console.error('Error inicializando gráficas:', e);
-      setTimeout(initPlotly, 200);
-    }
+  if (typeof Plotly === 'undefined') {
+    setTimeout(initPlotly, 50);
+    return;
+  }
+  
+  try {
+    updatePlot();
+    initExamples();
+  } catch (e) {
+    console.error('Error en initPlotly:', e);
+    setTimeout(initPlotly, 200);
+  }
+}
+
+// Ejecutar cuando el documento esté listo
+function startInit() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startInit);
   } else {
     setTimeout(initPlotly, 100);
   }
 }
 
-// Ejecutar initPlotly cuando el DOM esté listo
-function startInit() {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initPlotly);
-  } else {
-    initPlotly();
-  }
-}
-
-// Iniciar inmediatamente
 startInit();
 
 // ──────────────────────────────────────────
