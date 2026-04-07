@@ -853,40 +853,64 @@ function initExamples() {
   })();
 }
 
-// Listener para cambios en función base
-document.addEventListener('DOMContentLoaded', function() {
+// Esperar a que DOM esté listo
+function setupEventListeners() {
   const baseFnElement = document.getElementById('base-fn');
-  if (baseFnElement) {
-    baseFnElement.addEventListener('change', updatePlot);
-  }
-});
+  const hVal = document.getElementById('h-val');
+  const aVal = document.getElementById('a-val');
+  const kVal = document.getElementById('k-val');
+  
+  if (baseFnElement) baseFnElement.addEventListener('change', () => {
+    console.log('Cambio de función base');
+    updatePlot();
+  });
+  
+  // Listeners para sliders
+  if (hVal) hVal.addEventListener('input', () => {
+    console.log('Cambio h:', hVal.value);
+    updatePlot();
+  });
+  if (aVal) aVal.addEventListener('input', () => {
+    console.log('Cambio a:', aVal.value);
+    updatePlot();
+  });
+  if (kVal) kVal.addEventListener('input', () => {
+    console.log('Cambio k:', kVal.value);
+    updatePlot();
+  });
+}
 
-// Inicialización de Plotly
-function initPlotly() {
+// Verificar que Plotly esté listo
+function waitForPlotly() {
   if (typeof Plotly === 'undefined') {
-    setTimeout(initPlotly, 50);
+    console.log('Esperando Plotly...');
+    setTimeout(waitForPlotly, 100);
     return;
   }
   
+  console.log('Plotly cargado. Inicializando gráficas...');
+  
   try {
+    // Configurar event listeners
+    setupEventListeners();
+    
+    // Inicializar gráficas
     updatePlot();
     initExamples();
+    
+    console.log('Gráficas inicializadas correctamente');
   } catch (e) {
-    console.error('Error en initPlotly:', e);
-    setTimeout(initPlotly, 200);
+    console.error('Error en inicialización:', e);
+    setTimeout(waitForPlotly, 500);
   }
 }
 
-// Ejecutar cuando el documento esté listo
-function startInit() {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', startInit);
-  } else {
-    setTimeout(initPlotly, 100);
-  }
+// Iniciar cuando DOM cargue
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', waitForPlotly);
+} else {
+  setTimeout(waitForPlotly, 500);
 }
-
-startInit();
 
 // ──────────────────────────────────────────
 // CALCULADORA COMPLETAR CUADRADO
@@ -974,50 +998,6 @@ function calcVertice() {
      marker:{color:C_ROJO, size:9}},
     ...rootTraces
   ], plotLayout([xCenter-xRange, xCenter+xRange], [Math.min(...ysNew)-3, Math.max(...ysNew)+3]), {responsive:true, displayModeBar:true});
-}
-
-// ──────────────────────────────────────────
-// EJEMPLOS FIJOS
-// ──────────────────────────────────────────
-function initExamples() {
-  // Ej 1: f(x) = -2(x-2)^2 + 5
-  (function() {
-    const xs = linspace(-1, 5, 300);
-    const ys1 = xs.map(x => x*x);
-    const ys2 = xs.map(x => -2*(x-2)**2+5);
-    const x0 = [2-Math.sqrt(2.5), 2+Math.sqrt(2.5)];
-    Plotly.newPlot('ej1-plot', [
-      {x:xs, y:ys1, mode:'lines', name:'y = x²', line:{color:C_GRIS, dash:'dot', width:2}},
-      {x:xs, y:ys2, mode:'lines', name:'f(x)=−2(x−2)²+5', line:{color:C_AZUL, width:3}},
-      {x:[2], y:[5], mode:'markers', name:'Vértice (2,5)', marker:{color:C_ORO, size:12}},
-      {x:[0], y:[-3], mode:'markers', name:'Eje y (0,−3)', marker:{color:C_ROJO, size:9}},
-      {x:x0, y:[0,0], mode:'markers', name:'Eje x', marker:{color:C_VERDE, size:9}}
-    ], plotLayout([-1,5],[-6,7],'f(x) = −2(x−2)² + 5'), {responsive:true, displayModeBar:true});
-  })();
-
-  // Ej 2: g(x) = -(x-2)^3 + 1
-  (function() {
-    const xs = linspace(-0.5, 4.5, 300);
-    const ys1 = xs.map(x => x**3);
-    const ys2 = xs.map(x => -(x-2)**3+1);
-    Plotly.newPlot('ej2-plot', [
-      {x:xs, y:ys1, mode:'lines', name:'y = x³', line:{color:C_GRIS, dash:'dot', width:2}},
-      {x:xs, y:ys2, mode:'lines', name:'g(x)=−(x−2)³+1', line:{color:C_AZUL, width:3}},
-      {x:[2], y:[1], mode:'markers', name:'Inflexión (2,1)', marker:{color:C_ORO, size:12}},
-      {x:[0], y:[9], mode:'markers', name:'Eje y (0,9)', marker:{color:C_ROJO, size:9}},
-      {x:[3], y:[0], mode:'markers', name:'Eje x (3,0)', marker:{color:C_VERDE, size:9}}
-    ], plotLayout([-0.5,4.5],[-9,11],'g(x) = −(x−2)³ + 1'), {responsive:true, displayModeBar:true});
-  })();
-
-  // Ej 3: f(x) = (x-1)^2 + 2
-  (function() {
-    const xs = linspace(-2, 5, 300);
-    const ys = xs.map(x => (x-1)**2+2);
-    Plotly.newPlot('ej3-plot', [
-      {x:xs, y:ys, mode:'lines', name:'f(x)=?', line:{color:C_AZUL, width:3}},
-      {x:[1], y:[2], mode:'markers', name:'(1, 2)', marker:{color:C_ORO, size:12}}
-    ], plotLayout([-2,5],[-1,9],'¿Cuál es el criterio?'), {responsive:true, displayModeBar:true});
-  })();
 }
 
 // ──────────────────────────────────────────
