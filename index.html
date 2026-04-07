@@ -18,9 +18,6 @@
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 
-  <!-- Plotly para gráficas interactivas -->
-  <script src="./plotly.min.js"></script>
-
   <style>
     :root {
       --azul:   #003874;
@@ -717,6 +714,8 @@
 </footer>
 
 <!-- ═══════ SCRIPTS ═══════ -->
+<!-- Plotly: archivo local en el repo (funciona en GitHub Pages sin depender del CDN) -->
+<script src="plotly.min.js"></script>
 <script>
 // ──────────────────────────────────────────
 // Paleta UCR
@@ -880,36 +879,28 @@ function setupEventListeners() {
   });
 }
 
-// Verificar que Plotly esté listo
-function waitForPlotly() {
+function initCharts() {
   if (typeof Plotly === 'undefined') {
-    console.log('Esperando Plotly...');
-    setTimeout(waitForPlotly, 100);
+    const msg = '<p style="padding:1.5rem;text-align:center;color:var(--rojo);font-size:0.95rem;">No se pudo cargar Plotly (<code>plotly.min.js</code>). Asegúrese de subir ese archivo junto a <code>index.html</code> en el repositorio.</p>';
+    ['main-plot', 'ej1-plot', 'ej2-plot', 'ej3-plot', 'vertice-plot'].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = msg;
+    });
     return;
   }
-  
-  console.log('Plotly cargado. Inicializando gráficas...');
-  
   try {
-    // Configurar event listeners
     setupEventListeners();
-    
-    // Inicializar gráficas
     updatePlot();
     initExamples();
-    
-    console.log('Gráficas inicializadas correctamente');
   } catch (e) {
-    console.error('Error en inicialización:', e);
-    setTimeout(waitForPlotly, 500);
+    console.error('Error al inicializar gráficas:', e);
   }
 }
 
-// Iniciar cuando DOM cargue
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', waitForPlotly);
+  document.addEventListener('DOMContentLoaded', initCharts);
 } else {
-  setTimeout(waitForPlotly, 500);
+  initCharts();
 }
 
 // ──────────────────────────────────────────
@@ -987,17 +978,19 @@ function calcVertice() {
       marker:{color:C_VERDE, size:9}});
   }
 
-  Plotly.react('vertice-plot', [
-    {x:xs, y:ysBase, mode:'lines', name:'f(x)=x²',
-     line:{color:C_GRIS, dash:'dot', width:2}},
-    {x:xs, y:ysNew, mode:'lines', name:`f(x)=${aDisp}(x${h>=0?'−':'+'}${Math.abs(h)})²${k>=0?'+':''}${kDisp}`,
-     line:{color:C_AZUL, width:3}},
-    {x:[h], y:[k], mode:'markers', name:`Vértice (${hDisp},${kDisp})`,
-     marker:{color:C_ORO, size:11, symbol:'circle'}},
-    {x:[0], y:[c], mode:'markers', name:`Eje y (0,${c})`,
-     marker:{color:C_ROJO, size:9}},
-    ...rootTraces
-  ], plotLayout([xCenter-xRange, xCenter+xRange], [Math.min(...ysNew)-3, Math.max(...ysNew)+3]), {responsive:true, displayModeBar:true});
+  if (typeof Plotly !== 'undefined') {
+    Plotly.react('vertice-plot', [
+      {x:xs, y:ysBase, mode:'lines', name:'f(x)=x²',
+       line:{color:C_GRIS, dash:'dot', width:2}},
+      {x:xs, y:ysNew, mode:'lines', name:`f(x)=${aDisp}(x${h>=0?'−':'+'}${Math.abs(h)})²${k>=0?'+':''}${kDisp}`,
+       line:{color:C_AZUL, width:3}},
+      {x:[h], y:[k], mode:'markers', name:`Vértice (${hDisp},${kDisp})`,
+       marker:{color:C_ORO, size:11, symbol:'circle'}},
+      {x:[0], y:[c], mode:'markers', name:`Eje y (0,${c})`,
+       marker:{color:C_ROJO, size:9}},
+      ...rootTraces
+    ], plotLayout([xCenter-xRange, xCenter+xRange], [Math.min(...ysNew)-3, Math.max(...ysNew)+3]), {responsive:true, displayModeBar:true});
+  }
 }
 
 // ──────────────────────────────────────────
@@ -1010,6 +1003,7 @@ function openTab(id, btn) {
   btn.classList.add('active');
   // Re-render Plotly en pestaña activa
   setTimeout(() => {
+    if (typeof Plotly === 'undefined') return;
     const pid = id==='ej1'?'ej1-plot':id==='ej2'?'ej2-plot':'ej3-plot';
     Plotly.relayout(pid, {autosize:true});
   }, 100);
